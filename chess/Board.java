@@ -13,6 +13,12 @@ public class Board {
         return board[row][col];
     }
 
+    public static Piece getPiece(String square) {
+        int col = square.charAt(0) - 'a';
+        int row = 8 - (square.charAt(1) - '0');
+        return getPiece(row, col);
+    }
+
     public static void removePiece(int row, int col) {
         board[row][col] = null;
     }

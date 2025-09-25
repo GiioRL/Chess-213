@@ -18,6 +18,19 @@ public class Chess {
 	 */
 	public static ReturnPlay play(String move) {
 
+		String[] squares = move.split(" ");
+
+		if (squares.length != 2) {
+			ReturnPlay rp = new ReturnPlay();
+			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+			return rp;
+		} else if (Board.getPiece(squares[0]) == null) {
+			ReturnPlay rp = new ReturnPlay();
+			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+			return rp;
+		} else {
+		}
+
 		/* FILL IN THIS METHOD */
 		
 		/* FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY */
@@ -39,57 +52,53 @@ public class Chess {
 			while (i < 16) {
 				player = Piece.Player.white;
 				if (i < 8) {
-					type = Piece.Type.pawn;
-					pieces[i] = new Piece(type, player, 6, i);
+					pieces[i] = new Pawn(player, 6, i);
 				} else {
 					switch (i) {
 						case 8:
 						case 9:
-							type = Piece.Type.rook;
+							pieces[i] = new Rook(player, 7, i - 8);
 							break;
 						case 10:
 						case 11:
-							type = Piece.Type.knight;
+							pieces[i] = new Knight(player, 7, i - 8);
 							break;
 						case 12:
 						case 13:
-							type = Piece.Type.bishop;
+							pieces[i] = new Bishop(player, 7, i - 8);
 							break;
 						case 14:
-							type = Piece.Type.queen;
+							pieces[i] = new Queen(player, 7, i - 8);
 							break;
 						default:
-							type = Piece.Type.king;
+							pieces[i] = new King(player, 7, i - 8);
 					}
-					pieces[i] = new Piece(type, player, 7, i - 8);
 				}
 				i++;
 			}
 			player = Piece.Player.black;
 			if (i < 24) {
-				type = Piece.Type.pawn;
-				pieces[i] = new Piece(type, player, 1, i - 16);
+				pieces[i] = new Pawn(player, 1, i - 16);
 			} else {
 				switch (i) {
 					case 24:
 					case 25:
-						type = Piece.Type.rook;
+						pieces[i] = new Rook(player, 0, i - 24);
 						break;
 					case 26:
 					case 27:
-						type = Piece.Type.knight;
+						pieces[i] = new Knight(player, 0, i - 24);
 						break;
 					case 28:
 					case 29:
-						type = Piece.Type.bishop;
+						pieces[i] = new Bishop(player, 0, i - 24);
 						break;
 					case 30:
-						type = Piece.Type.queen;
+						pieces[i] = new Queen(player, 0, i - 24);
 						break;
 					default:
-						type = Piece.Type.king;	
+						pieces[i] = new King(player, 0, i - 24);
 				}
-				pieces[i] = new Piece(type, player, 0, i - 24);
 			}
 			i++;
 		}
