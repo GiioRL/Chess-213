@@ -26,6 +26,7 @@ public abstract class Piece {
     public abstract boolean canMove(int row, int col);
 
     public int move(int newRow, int newCol) {
+        System.out.println("im going to " + newRow + newCol);
         if (canMove(newRow, newCol)) {
             // Piece piece = Board.getPiece(row, col);
             ReturnPiece rp = Chess.makeReturnPiece(this);
@@ -40,9 +41,9 @@ public abstract class Piece {
                     col = newCol;
                     rp = Chess.makeReturnPiece(this);
                     Chess.returnPieces.add(rp);
+                    Board.hasPiece[row][col] = false;
+                    Board.hasPiece[newRow][newCol] = true;
                 }
-                Board.hasPiece[row][col] = false;
-                Board.hasPiece[newRow][newCol] = true;
             }
             return 1;
         } else {
@@ -50,7 +51,7 @@ public abstract class Piece {
         }
     }
 
-    public int move(String coord) {
+    public int move(String coord) { // move d8 h1 did not work
         int[] newCoord = Board.coordConverter(coord);
         return move(newCoord[0], newCoord[1]);
     }

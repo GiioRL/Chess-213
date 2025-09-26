@@ -41,6 +41,7 @@ public class Chess {
 	 */
 	public static void start() {
 		// System.out.println("holy crap chat we're about to play chess\n");
+		returnPieces.clear(); // clear old pieces in case of reset
 		int i = 0;
 		Piece.Type type;
 		Piece.Player player;

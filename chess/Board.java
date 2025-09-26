@@ -32,7 +32,9 @@ public class Board {
     }
 
     public static int[] coordConverter(String coord) {
-        return new int[] {coord.charAt(0) - 'a', 8 - (coord.charAt(1) - '0')};
+        int[] newCoord = new int[] {8 - (coord.charAt(1) - '0'), (coord.charAt(0) - 'a')};
+        System.out.println("coord converting " + coord + " to " + newCoord[0] + newCoord[1]);
+        return newCoord;
     }
 
     public boolean validSquare(String square) {
