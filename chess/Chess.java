@@ -20,19 +20,18 @@ public class Chess {
 	public static ReturnPlay play(String move) {
 
 		String[] squares = move.split(" ");
-		ReturnPlay rp = null; // maybe we instantiate it here
+		ReturnPlay rp = new ReturnPlay(); // maybe we instantiate it here
+		rp.piecesOnBoard = returnPieces; // update if legal move is made
 
-		if (squares.length != 2) {
-			rp = new ReturnPlay();
+		if (squares.length != 2) { // illegal input
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-		} else if (Board.getPiece(squares[0]) == null) {
-			rp = new ReturnPlay();
+		} else if (Board.getPiece(squares[0]) == null) { // no piece exists on square
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-		} else {
-			rp = new ReturnPlay();
+		} else { // legal move (not yet legal but heres the legal move code)
+			Piece piece = Board.getPiece(squares[0]);
+			piece.move(squares[1]); // coord converter
 		}
 
-		rp.piecesOnBoard = returnPieces;
 		return rp;
 	}
 	

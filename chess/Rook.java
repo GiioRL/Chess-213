@@ -9,10 +9,6 @@ public class Rook extends Piece {
     }
 
     public boolean canMove(int row, int col) {
-        return false; //implement
-    }
-
-    public void move(int row, int col) {
-        // implement
+        return true;
     }
 }

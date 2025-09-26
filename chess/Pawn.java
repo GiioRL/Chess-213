@@ -9,11 +9,6 @@ public class Pawn extends Piece {
     }
 
     public boolean canMove(int row, int col) {
-        return false; //implement
-    }
-
-    public void move(int row, int col) {
-        // implement
-        range = 1;
+        return true;
     }
 }

@@ -13,14 +13,26 @@ public class Board {
         return board[row][col];
     }
 
+    public static Piece getPiece (int[] coord) {
+        return board[coord[0]][coord[1]];
+    }
+
     public static Piece getPiece(String square) {
         int col = square.charAt(0) - 'a';
-        int row = 8 - (square.charAt(1) - '0');
+        int row = 8 - (square.charAt(1) - '0'); // replace with coord converter
         return getPiece(row, col);
     }
 
     public static void removePiece(int row, int col) {
         board[row][col] = null;
+    }
+
+    public static String coordConverter(int row, int col) { // check this guy
+        return "" + (char)('a' + col) + (row + '0');
+    }
+
+    public static int[] coordConverter(String coord) {
+        return new int[] {coord.charAt(0) - 'a', 8 - (coord.charAt(1) - '0')};
     }
 
     public static void printBoard() {
