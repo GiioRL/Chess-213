@@ -52,21 +52,21 @@ public class Chess {
 				} else {
 					switch (i) {
 						case 8:
-						case 9:
+						case 15:
 							pieces[i] = new Rook(player, 7, i - 8);
 							break;
-						case 10:
-						case 11:
+						case 9:
+						case 14:
 							pieces[i] = new Knight(player, 7, i - 8);
 							break;
-						case 12:
+						case 10:
 						case 13:
 							pieces[i] = new Bishop(player, 7, i - 8);
 							break;
-						case 14:
+						case 11:
 							pieces[i] = new Queen(player, 7, i - 8);
 							break;
-						default:
+						case 12:
 							pieces[i] = new King(player, 7, i - 8);
 					}
 				}
@@ -78,21 +78,21 @@ public class Chess {
 			} else {
 				switch (i) {
 					case 24:
-					case 25:
+					case 31:
 						pieces[i] = new Rook(player, 0, i - 24);
 						break;
-					case 26:
-					case 27:
+					case 25:
+					case 30:
 						pieces[i] = new Knight(player, 0, i - 24);
 						break;
-					case 28:
+					case 26:
 					case 29:
 						pieces[i] = new Bishop(player, 0, i - 24);
 						break;
-					case 30:
+					case 27:
 						pieces[i] = new Queen(player, 0, i - 24);
 						break;
-					default:
+					case 28:
 						pieces[i] = new King(player, 0, i - 24);
 				}
 			}

@@ -24,13 +24,23 @@ public abstract class Piece {
     }
 
     public abstract boolean canMove(int row, int col);
+
     public int move(int newRow, int newCol) {
         if (canMove(newRow, newCol)) {
+            // Piece piece = Board.getPiece(row, col);
+            ReturnPiece rp = Chess.makeReturnPiece(this);
             // String newCoord = Board.coordConverter(newRow, newCol);
             // System.out.println("newCoord: " + newCoord);
             if (Board.hasPiece[newRow][newCol]) { // capture
                 Board.hasPiece[row][col] = false; // make sure to kill the captured piece
             } else { // just move it
+                if (Chess.returnPieces.remove(rp)) {
+                    System.out.println("PIECE FOUND!!");
+                    row = newRow;
+                    col = newCol;
+                    rp = Chess.makeReturnPiece(this);
+                    Chess.returnPieces.add(rp);
+                }
                 Board.hasPiece[row][col] = false;
                 Board.hasPiece[newRow][newCol] = true;
             }

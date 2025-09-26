@@ -35,6 +35,10 @@ public class Board {
         return new int[] {coord.charAt(0) - 'a', 8 - (coord.charAt(1) - '0')};
     }
 
+    public boolean validSquare(String square) {
+        return true; //implement
+    }
+
     public static void printBoard() {
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
