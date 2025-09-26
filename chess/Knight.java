@@ -1,12 +1,11 @@
 package chess;
 
 public class Knight extends Piece {
-    Type type = Type.knight;
-    int range = 3; //special case
-
+    
     public Knight(Player player, int row, int col) {
         super(player, row, col);
-
+        type = Type.knight;
+        range = 3; //special case
     }
 
     public boolean canMove(int row, int col) {

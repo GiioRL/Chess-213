@@ -6,6 +6,7 @@ public class Chess {
 
         enum Player { white, black }
 		static Piece[] pieces = new Piece[32];
+		static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
     
 	/**
 	 * Plays the next move for whichever player has the turn.
@@ -19,23 +20,20 @@ public class Chess {
 	public static ReturnPlay play(String move) {
 
 		String[] squares = move.split(" ");
+		ReturnPlay rp = null; // maybe we instantiate it here
 
 		if (squares.length != 2) {
-			ReturnPlay rp = new ReturnPlay();
+			rp = new ReturnPlay();
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-			return rp;
 		} else if (Board.getPiece(squares[0]) == null) {
-			ReturnPlay rp = new ReturnPlay();
+			rp = new ReturnPlay();
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-			return rp;
 		} else {
+			rp = new ReturnPlay();
 		}
 
-		/* FILL IN THIS METHOD */
-		
-		/* FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY */
-		/* WHEN YOU FILL IN THIS METHOD, YOU NEED TO RETURN A ReturnPlay OBJECT */
-		return null;
+		rp.piecesOnBoard = returnPieces;
+		return rp;
 	}
 	
 	
@@ -43,8 +41,7 @@ public class Chess {
 	 * This method should reset the game, and start from scratch.
 	 */
 	public static void start() {
-		System.out.println("holy crap chat we're about to play chess\n");
-
+		// System.out.println("holy crap chat we're about to play chess\n");
 		int i = 0;
 		Piece.Type type;
 		Piece.Player player;
@@ -104,7 +101,36 @@ public class Chess {
 		}
 		for (Piece piece : pieces) {
 			Board.placePiece(piece);
+			returnPieces.add(makeReturnPiece(piece));
 		}
-		Board.printBoard();
+		// Board.printBoard();
+		PlayChess.printBoard(returnPieces);
+	}
+
+	public static ReturnPiece makeReturnPiece(Piece piece) {
+		ReturnPiece rp = new ReturnPiece();
+		switch (piece.type) {
+			case pawn:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WP : ReturnPiece.PieceType.BP;
+				break;
+			case rook:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WR : ReturnPiece.PieceType.BR;
+				break;
+			case knight:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WN : ReturnPiece.PieceType.BN;
+				break;
+			case bishop:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WB : ReturnPiece.PieceType.BB;
+				break;
+			case queen:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WQ : ReturnPiece.PieceType.BQ;
+				break;
+			case king:
+				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WK : ReturnPiece.PieceType.BK;
+				break;
+		}
+		rp.pieceFile = ReturnPiece.PieceFile.values()[piece.col];
+		rp.pieceRank = 8 - piece.row;
+		return rp;
 	}
 }
