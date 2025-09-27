@@ -1,5 +1,7 @@
 package chess;
 
+import java.lang.Math;
+
 public class King extends Piece {
 
     public King(Player player, int row, int col) {
@@ -8,7 +10,10 @@ public class King extends Piece {
         range = 1;
     }
 
-    public boolean canMove(int row, int col) {
-        return true; //implement
+    public boolean canMove(int newRow, int newCol) {
+        if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
+            return (Math.abs(row-newRow) <= 1) && (Math.abs(col-newCol) <= 1);
+        }
+        return false;
     }
 }

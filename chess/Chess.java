@@ -31,7 +31,9 @@ public class Chess {
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		} else { // legal move (not yet legal but heres the legal move code)
 			Piece piece = Board.getPiece(squares[0]);
-			piece.move(squares[1]);
+			if (piece.move(squares[1]) == -1) {
+				rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+			}
 		}
 
 		return rp;

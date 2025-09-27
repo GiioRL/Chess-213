@@ -25,6 +25,15 @@ public abstract class Piece {
 
     public abstract boolean canMove(int row, int col);
 
+    public boolean cannibalCheck(int row, int col) { //check for piece on this square has same color, if return false, then illegal move
+        Piece piece = Board.getPiece(row, col);
+        if (piece != null) {
+            System.out.println("EAT");
+            return piece.player != player;
+        }
+        return true;
+    }
+
     public int move(int newRow, int newCol) {
         // System.out.println("im going to " + newRow + newCol);
         if (canMove(newRow, newCol)) {
