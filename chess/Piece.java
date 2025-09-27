@@ -29,20 +29,24 @@ public abstract class Piece {
         System.out.println("im going to " + newRow + newCol);
         if (canMove(newRow, newCol)) {
             // Piece piece = Board.getPiece(row, col);
-            ReturnPiece rp = Chess.makeReturnPiece(this);
+            ReturnPiece rp = Board.makeReturnPiece(this);
             // String newCoord = Board.coordConverter(newRow, newCol);
             // System.out.println("newCoord: " + newCoord);
             if (Board.hasPiece[newRow][newCol]) { // capture
+                System.out.println("munch munch munch");
                 Board.hasPiece[row][col] = false; // make sure to kill the captured piece
             } else { // just move it
-                if (Chess.returnPieces.remove(rp)) {
+                if (Board.returnPieces.remove(rp)) {
                     System.out.println("PIECE FOUND!!");
+                    Board.hasPiece[row][col] = false;
                     row = newRow;
                     col = newCol;
-                    rp = Chess.makeReturnPiece(this);
-                    Chess.returnPieces.add(rp);
-                    Board.hasPiece[row][col] = false;
-                    Board.hasPiece[newRow][newCol] = true;
+                    Board.placePiece(this);
+                    // rp = Board.makeReturnPiece(this);
+                    // Board.returnPieces.add(rp);
+                    // Board.hasPiece[newRow][newCol] = true;
+                } else {
+                    System.out.println("I wasn't found??");
                 }
             }
             return 1;

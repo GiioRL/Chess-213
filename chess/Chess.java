@@ -6,7 +6,6 @@ public class Chess {
 
         enum Player { white, black }
 		static Piece[] pieces = new Piece[32];
-		static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
     
 	/**
 	 * Plays the next move for whichever player has the turn.
@@ -17,19 +16,20 @@ public class Chess {
 	 *         See the section "The Chess class" in the assignment description for details of
 	 *         the contents of the returned ReturnPlay instance.
 	 */
-	public static ReturnPlay play(String move) {
+	public static ReturnPlay play(String move) { //check if input is valid
 
 		String[] squares = move.split(" ");
 		ReturnPlay rp = new ReturnPlay(); // maybe we instantiate it here
-		rp.piecesOnBoard = returnPieces; // update if legal move is made
+		rp.piecesOnBoard = Board.returnPieces; // update if legal move is made
 
 		if (squares.length != 2) { // illegal input
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		} else if (Board.getPiece(squares[0]) == null) { // no piece exists on square
+			System.out.println("no piece there bro");
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		} else { // legal move (not yet legal but heres the legal move code)
 			Piece piece = Board.getPiece(squares[0]);
-			piece.move(squares[1]); // coord converter
+			piece.move(squares[1]);
 		}
 
 		return rp;
@@ -41,7 +41,7 @@ public class Chess {
 	 */
 	public static void start() {
 		// System.out.println("holy crap chat we're about to play chess\n");
-		returnPieces.clear(); // clear old pieces in case of reset
+		Board.returnPieces.clear(); // clear old pieces in case of reset
 		int i = 0;
 		Piece.Type type;
 		Piece.Player player;
@@ -101,36 +101,9 @@ public class Chess {
 		}
 		for (Piece piece : pieces) {
 			Board.placePiece(piece);
-			returnPieces.add(makeReturnPiece(piece));
+			// returnPieces.add(makeReturnPiece(piece));
 		}
-		// Board.printBoard();
-		PlayChess.printBoard(returnPieces);
-	}
-
-	public static ReturnPiece makeReturnPiece(Piece piece) {
-		ReturnPiece rp = new ReturnPiece();
-		switch (piece.type) {
-			case pawn:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WP : ReturnPiece.PieceType.BP;
-				break;
-			case rook:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WR : ReturnPiece.PieceType.BR;
-				break;
-			case knight:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WN : ReturnPiece.PieceType.BN;
-				break;
-			case bishop:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WB : ReturnPiece.PieceType.BB;
-				break;
-			case queen:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WQ : ReturnPiece.PieceType.BQ;
-				break;
-			case king:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WK : ReturnPiece.PieceType.BK;
-				break;
-		}
-		rp.pieceFile = ReturnPiece.PieceFile.values()[piece.col];
-		rp.pieceRank = 8 - piece.row;
-		return rp;
+		Board.printBoard();
+		// PlayChess.printBoard(returnPieces);
 	}
 }
