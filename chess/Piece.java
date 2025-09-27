@@ -26,7 +26,7 @@ public abstract class Piece {
     public abstract boolean canMove(int row, int col);
 
     public int move(int newRow, int newCol) {
-        System.out.println("im going to " + newRow + newCol);
+        // System.out.println("im going to " + newRow + newCol);
         if (canMove(newRow, newCol)) {
             // Piece piece = Board.getPiece(row, col);
             ReturnPiece rp = Board.makeReturnPiece(this);
@@ -34,11 +34,17 @@ public abstract class Piece {
             // System.out.println("newCoord: " + newCoord);
             if (Board.hasPiece[newRow][newCol]) { // capture
                 System.out.println("munch munch munch");
-                Board.hasPiece[row][col] = false; // make sure to kill the captured piece
+                Board.removePiece(row, col);
+                row = newRow;
+                col = newCol;
+                Board.removePiece(row, col);
+                Board.placePiece(this);
+                // Board.hasPiece[row][col] = false; // make sure to kill the captured piece
             } else { // just move it
                 if (Board.returnPieces.remove(rp)) {
                     System.out.println("PIECE FOUND!!");
-                    Board.hasPiece[row][col] = false;
+                    Board.removePiece(row, col);
+                    // Board.hasPiece[row][col] = false;
                     row = newRow;
                     col = newCol;
                     Board.placePiece(this);

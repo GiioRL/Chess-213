@@ -21,14 +21,25 @@ public class Board {
         return board[coord[0]][coord[1]];
     }
 
+    // public static Piece getPiece(String square) {
+    //     int col = square.charAt(0) - 'a';
+    //     int row = 8 - (square.charAt(1) - '0'); // replace with coord converter
+    //     return getPiece(row, col);
+    // }
+
     public static Piece getPiece(String square) {
-        int col = square.charAt(0) - 'a';
-        int row = 8 - (square.charAt(1) - '0'); // replace with coord converter
-        return getPiece(row, col);
+        return getPiece(coordConverter(square));
     }
 
-    public static void removePiece(int row, int col) { //return piece
+    public static Piece removePiece(int row, int col) { //return piece
+        if (!hasPiece[row][col]) {
+            return null;
+        }
+        Piece piece = board[row][col];
         board[row][col] = null;
+        hasPiece[row][col] = false;
+        returnPieces.remove(makeReturnPiece(piece));
+        return piece;
     }
 
     public static String coordConverter(int row, int col) { // check this guy
@@ -37,12 +48,16 @@ public class Board {
 
     public static int[] coordConverter(String coord) {
         int[] newCoord = new int[] {8 - (coord.charAt(1) - '0'), (coord.charAt(0) - 'a')};
-        System.out.println("coord converting " + coord + " to " + newCoord[0] + newCoord[1]);
+        // System.out.println("coord converting " + coord + " to " + newCoord[0] + newCoord[1]);
         return newCoord;
     }
 
-    public boolean validSquare(String square) {
-        return true; //implement
+    public static boolean validSquare(String square) {
+        if (square.length() != 2) {
+            return false;
+        }
+        int[] coord = coordConverter(square);
+        return (coord[0] >= 0 && coord[0] <= 7 && coord[1] >= 0 && coord[1] <= 7);
     }
 
     public static ReturnPiece makeReturnPiece(Piece piece) {

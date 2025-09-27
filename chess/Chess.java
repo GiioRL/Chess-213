@@ -20,9 +20,11 @@ public class Chess {
 
 		String[] squares = move.split(" ");
 		ReturnPlay rp = new ReturnPlay(); // maybe we instantiate it here
-		rp.piecesOnBoard = Board.returnPieces; // update if legal move is made
+		rp.piecesOnBoard = Board.returnPieces; // update if legal move is made wait this is an object it auto updates right
 
-		if (squares.length != 2) { // illegal input
+		if (squares.length != 2) { // illegal input actually this is not true but for now it is
+			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+		} else if (!Board.validSquare(squares[0]) || !Board.validSquare(squares[1])) { //fake square
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		} else if (Board.getPiece(squares[0]) == null) { // no piece exists on square
 			System.out.println("no piece there bro");
