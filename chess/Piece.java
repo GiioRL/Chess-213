@@ -1,8 +1,12 @@
 package chess;
 
+import java.lang.Math;
+import java.util.ArrayList;
+
 public abstract class Piece {
-    enum Type { king, queen, rook, bishop, knight, pawn }
-    enum Player { white, black }
+    enum Type {king, queen, rook, bishop, knight, pawn}
+    enum Player {white, black}
+    enum MoveType {vertical, horizontal, diagonal, knight, illegal};
     
     Type type;
     Player player;
@@ -10,6 +14,7 @@ public abstract class Piece {
     int col; // 0 to 7 for columns a to h
     String coord;
     int range;
+    ArrayList<MoveType> moveTypes;
     Piece[] seenBy;
 
     public Piece(Player player, int row, int col) {
@@ -17,6 +22,7 @@ public abstract class Piece {
         this.row = row;
         this.col = col;
         coord = Board.coordConverter(row, col);
+        moveTypes = new ArrayList<MoveType>();
     }
 
     public String toString() {
@@ -34,40 +40,68 @@ public abstract class Piece {
         return true;
     }
 
-    public int move(int newRow, int newCol) {
-        // System.out.println("im going to " + newRow + newCol);
-        if (canMove(newRow, newCol)) {
-            // Piece piece = Board.getPiece(row, col);
-            ReturnPiece rp = Board.makeReturnPiece(this);
-            // String newCoord = Board.coordConverter(newRow, newCol);
-            // System.out.println("newCoord: " + newCoord);
-            if (Board.hasPiece[newRow][newCol]) { // capture
-                System.out.println("munch munch munch");
-                Board.removePiece(row, col);
-                row = newRow;
-                col = newCol;
-                Board.removePiece(row, col);
-                Board.placePiece(this);
-                // Board.hasPiece[row][col] = false; // make sure to kill the captured piece
-            } else { // just move it
-                if (Board.returnPieces.remove(rp)) {
-                    System.out.println("PIECE FOUND!!");
-                    Board.removePiece(row, col);
-                    // Board.hasPiece[row][col] = false;
-                    row = newRow;
-                    col = newCol;
-                    Board.placePiece(this);
-                    // rp = Board.makeReturnPiece(this);
-                    // Board.returnPieces.add(rp);
-                    // Board.hasPiece[newRow][newCol] = true;
-                } else {
-                    System.out.println("I wasn't found??");
-                }
+    public MoveType classifyMove(int newRow, int newCol) {
+        if ((row - newRow) == 0) {
+            if ((col - newCol) == 0) {
+                return MoveType.illegal;
+            } else {
+                return MoveType.horizontal;
             }
-            return 1;
+        } else if (Math.abs(col - newCol) == 0) {
+            return MoveType.vertical;
+        } else if (Math.abs(row - newRow) == Math.abs(col - newCol)) {
+            return MoveType.diagonal;
+        } else if (Math.abs(row - newRow) == 1) {
+            if (Math.abs(col - newCol) == 2) {
+                return MoveType.knight;
+            } else {
+                return MoveType.illegal;
+            }
+        } else if (Math.abs(row - newRow) == 2) {
+            if (Math.abs(col - newCol) == 1) {
+                return MoveType.knight;
+            } else {
+                return MoveType.illegal;
+            }
         } else {
-            return -1;
+            return MoveType.illegal;
         }
+    }
+
+    public int move(int newRow, int newCol) {
+        if (moveTypes.contains(classifyMove(newRow, newCol))) { // piece is allowed to move in this direction
+            if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
+                if (canMove(newRow, newCol)) { // i actually dont think this does anything anmymore really
+                    ReturnPiece rp = Board.makeReturnPiece(this);
+                    if (Board.hasPiece[newRow][newCol]) { // capture
+                        System.out.println("munch munch munch");
+                        Board.removePiece(row, col);
+                        row = newRow;
+                        col = newCol;
+                        Board.removePiece(row, col);
+                        Board.placePiece(this);
+                    } else { // just move it
+                        if (Board.returnPieces.remove(rp)) {
+                            System.out.println("PIECE FOUND!!");
+                            Board.removePiece(row, col);
+                            row = newRow;
+                            col = newCol;
+                            Board.placePiece(this);
+                        } else {
+                            System.out.println("I wasn't found??");
+                        }
+                    }
+                    return 1; // move was legal, and made
+                // } else {
+                //     return -1; // move is legal for this piece (may be deleted) ??
+                }
+            // } else { // piece is eating its own color
+            //     return -1;
+            }
+        // } else {
+        //     return -1; //piece cannot move in this direction
+        }
+        return -1; //move is illegal and was not made
     }
 
     public int move(String coord) { // move d8 h1 did not work

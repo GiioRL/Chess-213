@@ -6,6 +6,7 @@ public class Bishop extends Piece {
         super(player, row, col);
         type = Type.bishop;
         range = 7;
+        moveTypes.add(MoveType.diagonal);
     }
 
     public boolean canMove(int row, int col) {

@@ -6,6 +6,7 @@ public class Rook extends Piece {
         super(player, row, col);
         type = Type.rook;
         range = 7;
+        moveTypes.add(MoveType.vertical);
     }
 
     public boolean canMove(int row, int col) {

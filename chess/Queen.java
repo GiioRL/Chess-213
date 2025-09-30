@@ -6,6 +6,9 @@ public class Queen extends Piece {
         super(player, row, col);
         type = Type.queen;
         range = 7;
+        moveTypes.add(MoveType.vertical);
+        moveTypes.add(MoveType.horizontal);
+        moveTypes.add(MoveType.diagonal);
     }
 
     public boolean canMove(int row, int col) {
