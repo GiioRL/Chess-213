@@ -1,7 +1,5 @@
 package chess;
 
-import java.util.ArrayList;
-
 public class Chess {
 
         enum Player { white, black }
@@ -47,7 +45,6 @@ public class Chess {
 		// System.out.println("holy crap chat we're about to play chess\n");
 		Board.returnPieces.clear(); // clear old pieces in case of reset
 		int i = 0;
-		Piece.Type type;
 		Piece.Player player;
 		while (i < 32 ) {
 			while (i < 16) {
