@@ -49,43 +49,4 @@ public class Pawn extends Piece {
         }
         return num;
     }
-
-    // public int move(int newRow, int newCol) {
-    //     if (moveTypes.contains(classifyMove(newRow, newCol))) { // piece is allowed to move in this direction
-    //         if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
-    //             if (canMove(newRow, newCol)) { // i actually dont think this does anything anmymore really
-    //                 ReturnPiece rp = Board.makeReturnPiece(this);
-    //                 if (Board.hasPiece[newRow][newCol]) { // capture
-    //                     System.out.println("munch munch munch");
-    //                     Board.removePiece(row, col);
-    //                     row = newRow;
-    //                     col = newCol;
-    //                     Board.removePiece(row, col);
-    //                     Board.placePiece(this);
-    //                 } else { // just move it
-    //                     if (Board.returnPieces.remove(rp)) {
-    //                         System.out.println("PIECE FOUND!!");
-    //                         Board.removePiece(row, col);
-    //                         row = newRow;
-    //                         col = newCol;
-    //                         Board.placePiece(this);
-    //                     } else {
-    //                         System.out.println("I wasn't found??");
-    //                     }
-    //                 }
-    //                 return 1; // move was legal, and made
-    //             // } else {
-    //             //     return -1; // move is legal for this piece (may be deleted) ??
-    //             }
-    //         // } else { // piece is eating its own color
-    //         //     return -1;
-    //         }
-    //     // } else {
-    //     //     return -1; //piece cannot move in this direction
-    //     }
-    //     return -1; //move is illegal and was not made
-    // }
-
-    // public int move (int newRow, int newCol) {
-    //        }
 }

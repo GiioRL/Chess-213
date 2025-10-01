@@ -29,7 +29,7 @@ public abstract class Piece {
         return "" + player + " " + type + " " + (char)('a' + col) + (8 - row);
     }
 
-    public abstract boolean canMove(int row, int col);
+    public abstract boolean canMove(int row, int col); // cannibalCheck, check that no pieces in the path (unless knight), make sure move doesn't result in check on self, move in range.
 
     public boolean cannibalCheck(int row, int col) { //check for piece on this square has same color, if return false, then illegal move
         Piece piece = Board.getPiece(row, col);
@@ -66,6 +66,62 @@ public abstract class Piece {
         } else {
             return MoveType.illegal;
         }
+    }
+
+    public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square
+        int[][] squares = null;
+        int lo = -1;
+        int hi = -1;
+        if (movetype == MoveType.vertical) {
+            squares = new int[Math.abs(row - newRow) - 1][2];
+            if (row < newRow) {
+                lo = row;
+                hi = newRow;
+            } else {
+                lo = newRow;
+                hi = row;
+            }
+        } else if (movetype == MoveType.horizontal) {
+            squares = new int[Math.abs(col - newCol) - 1][2];
+            if (col < newCol) {
+                lo = col;
+                hi = newCol;
+            } else {
+                lo = newCol;
+                hi = col;
+            }
+        } else if (movetype == MoveType.diagonal) { //implement this
+            // squares = new int[Math.abs(row - newRow) - 1][2];
+            // int lo1 = -1;
+            // int lo2 = -1;
+            // int hi1 = -1;
+            // int hi2 = -1;
+            // if (row < newRow) {
+            //     lo1 = row;
+            //     hi1 = newRow;
+            // } else {
+            //     lo1 = newRow;
+            //     hi1 = row;
+            // }
+            // if (col < newCol) {
+            //     lo2 = col;
+            //     hi2 = newCol;
+            // } else {
+            //     lo2 = newCol;
+            //     hi2 = col;
+            // }
+            // int i = 0;
+            // lo1++;
+            // lo2++;
+            // (while)            
+        }
+        int i = 0;
+        lo++;
+        while (lo < hi) {
+            squares[i][0] = lo++;
+            squares[i][1] = col;
+        }
+        return squares;
     }
 
     public int move(int newRow, int newCol) {
