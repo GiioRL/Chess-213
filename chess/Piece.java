@@ -72,6 +72,7 @@ public abstract class Piece {
         int[][] squares = null;
         int lo = -1;
         int hi = -1;
+        int i = 0;
         if (movetype == MoveType.vertical) {
             squares = new int[Math.abs(row - newRow) - 1][2];
             if (row < newRow) {
@@ -80,6 +81,11 @@ public abstract class Piece {
             } else {
                 lo = newRow;
                 hi = row;
+            }
+            lo++;
+            while (lo < hi) {
+                squares[i][0] = lo++;
+                squares[i++][1] = col;
             }
         } else if (movetype == MoveType.horizontal) {
             squares = new int[Math.abs(col - newCol) - 1][2];
@@ -90,36 +96,40 @@ public abstract class Piece {
                 lo = newCol;
                 hi = col;
             }
+            lo++;
+            while (lo < hi) {
+                squares[i][0] = row;
+                squares[i++][1] = lo++;
+            }
         } else if (movetype == MoveType.diagonal) { //implement this
-            // squares = new int[Math.abs(row - newRow) - 1][2];
-            // int lo1 = -1;
-            // int lo2 = -1;
-            // int hi1 = -1;
-            // int hi2 = -1;
-            // if (row < newRow) {
-            //     lo1 = row;
-            //     hi1 = newRow;
-            // } else {
-            //     lo1 = newRow;
-            //     hi1 = row;
-            // }
-            // if (col < newCol) {
-            //     lo2 = col;
-            //     hi2 = newCol;
-            // } else {
-            //     lo2 = newCol;
-            //     hi2 = col;
-            // }
-            // int i = 0;
-            // lo1++;
-            // lo2++;
-            // (while)            
-        }
-        int i = 0;
-        lo++;
-        while (lo < hi) {
-            squares[i][0] = lo++;
-            squares[i][1] = col;
+            squares = new int[Math.abs(row - newRow) - 1][2];
+            boolean bool = false;
+            int temp = -1;
+            if (row < newRow) {
+                lo = row;
+                hi = newRow;
+                bool = (col < newCol);
+                temp = col;
+            } else {
+                lo = newRow;
+                hi = row;
+                bool = (newCol < col);
+                temp = newCol;
+            }
+
+            lo++;
+            temp++;
+            if (bool) {
+                while (lo < hi) {
+                    squares[i][0] = lo++;
+                    squares[i++][1] = temp++;
+                }
+            } else {
+                while (lo < hi) {
+                    squares[i][0] = lo++;
+                    squares[i++][1] = temp--;
+                } 
+            }
         }
         return squares;
     }
