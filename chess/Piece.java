@@ -70,7 +70,7 @@ public abstract class Piece {
 
     public int move(int newRow, int newCol) {
         if (moveTypes.contains(classifyMove(newRow, newCol))) { // piece is allowed to move in this direction
-            if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
+            // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
                 if (canMove(newRow, newCol)) { // i actually dont think this does anything anmymore really
                     ReturnPiece rp = Board.makeReturnPiece(this);
                     if (Board.hasPiece[newRow][newCol]) { // capture
@@ -97,7 +97,7 @@ public abstract class Piece {
                 }
             // } else { // piece is eating its own color
             //     return -1;
-            }
+            // }
         // } else {
         //     return -1; //piece cannot move in this direction
         }

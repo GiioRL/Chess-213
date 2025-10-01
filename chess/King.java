@@ -14,10 +14,10 @@ public class King extends Piece {
     }
 
     public boolean canMove(int newRow, int newCol) {
-        // if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
-        //     return (Math.abs(row-newRow) <= range) && (Math.abs(col-newCol) <= range);
-        // }
-        // return false;
-        return (Math.abs(row-newRow) <= range) && (Math.abs(col-newCol) <= range);
+        if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
+            return (Math.abs(row-newRow) <= range) && (Math.abs(col-newCol) <= range);
+        }
+        return false;
+        // return (Math.abs(row-newRow) <= range) && (Math.abs(col-newCol) <= range);
     }
 }

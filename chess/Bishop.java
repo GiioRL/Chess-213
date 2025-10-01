@@ -10,6 +10,6 @@ public class Bishop extends Piece {
     }
 
     public boolean canMove(int row, int col) {
-        return true;
+        return cannibalCheck(row, col);
     }
 }
