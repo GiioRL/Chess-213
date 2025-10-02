@@ -13,7 +13,7 @@ public class King extends Piece {
         moveTypes.add(MoveType.diagonal);
     }
 
-    public boolean canMove(int newRow, int newCol) {
+    public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
             return (Math.abs(row-newRow) <= range) && (Math.abs(col-newCol) <= range);
         }

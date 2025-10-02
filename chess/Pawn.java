@@ -10,13 +10,12 @@ public class Pawn extends Piece {
         moveTypes.add(MoveType.diagonal);
     }
 
-    public boolean canMove(int newRow, int newCol) {
-        MoveType movetype = classifyMove(newRow, newCol);
+    public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) {
             if (movetype == MoveType.vertical) {
                 if (!Board.hasPiece[newRow][newCol]) {
                     if (player == Player.white) {
-                        System.out.println("" + player + row + newRow);
+                        // System.out.println("" + player + row + newRow);
                         return ((row > newRow) && (row - newRow) <= range);
                     } else {
                         return ((newRow > row) && (newRow - row) <= range);

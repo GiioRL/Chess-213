@@ -8,8 +8,4 @@ public class Bishop extends Piece {
         range = 7;
         moveTypes.add(MoveType.diagonal);
     }
-
-    public boolean canMove(int row, int col) {
-        return cannibalCheck(row, col);
-    }
 }

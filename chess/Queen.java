@@ -10,8 +10,4 @@ public class Queen extends Piece {
         moveTypes.add(MoveType.horizontal);
         moveTypes.add(MoveType.diagonal);
     }
-
-    public boolean canMove(int row, int col) {
-        return cannibalCheck(row, col);
-    }
 }

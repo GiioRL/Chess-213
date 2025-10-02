@@ -29,12 +29,26 @@ public abstract class Piece {
         return "" + player + " " + type + " " + (char)('a' + col) + (8 - row);
     }
 
-    public abstract boolean canMove(int row, int col); // cannibalCheck, check that no pieces in the path (unless knight), make sure move doesn't result in check on self, move in range.
+    public boolean canMove(int row, int col, MoveType movetype) { // cannibalCheck, check that no pieces in the path (unless knight), make sure move doesn't result in check on self, move in range.
+        if (cannibalCheck(row, col)) {
+            boolean bool = true;
+            // System.out.println("getting the path");
+            int[][] squares = getPath(row, col, movetype);
+            if (squares != null) {
+                for (int i = 0; i < squares.length; i++) {
+                    // System.out.println("checking square " + squares[i][0] + squares[i][1]);
+                    bool &= !Board.hasPiece[squares[i][0]][squares[i][1]];
+                }
+            }
+            return bool;
+        }
+        return false;
+    }
 
     public boolean cannibalCheck(int row, int col) { //check for piece on this square has same color, if return false, then illegal move
         Piece piece = Board.getPiece(row, col);
         if (piece != null) {
-            System.out.println("EAT");
+            // System.out.println("EAT");
             return piece.player != player;
         }
         return true;
@@ -69,6 +83,7 @@ public abstract class Piece {
     }
 
     public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square
+        // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
         int[][] squares = null;
         int lo = -1;
         int hi = -1;
@@ -82,6 +97,7 @@ public abstract class Piece {
                 lo = newRow;
                 hi = row;
             }
+            // System.out.println("lo: " + lo + "hi: " + hi);
             lo++;
             while (lo < hi) {
                 squares[i][0] = lo++;
@@ -96,12 +112,13 @@ public abstract class Piece {
                 lo = newCol;
                 hi = col;
             }
+            // System.out.println("lo: " + lo + "hi: " + hi);
             lo++;
             while (lo < hi) {
                 squares[i][0] = row;
                 squares[i++][1] = lo++;
             }
-        } else if (movetype == MoveType.diagonal) { //implement this
+        } else if (movetype == MoveType.diagonal) {
             squares = new int[Math.abs(row - newRow) - 1][2];
             boolean bool = false;
             int temp = -1;
@@ -116,15 +133,17 @@ public abstract class Piece {
                 bool = (newCol < col);
                 temp = newCol;
             }
+            // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
 
             lo++;
-            temp++;
             if (bool) {
+                temp++;
                 while (lo < hi) {
                     squares[i][0] = lo++;
                     squares[i++][1] = temp++;
                 }
             } else {
+                temp--;
                 while (lo < hi) {
                     squares[i][0] = lo++;
                     squares[i++][1] = temp--;
@@ -135,12 +154,13 @@ public abstract class Piece {
     }
 
     public int move(int newRow, int newCol) {
-        if (moveTypes.contains(classifyMove(newRow, newCol))) { // piece is allowed to move in this direction
+        MoveType movetype = classifyMove(newRow, newCol);
+        if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction
             // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
-                if (canMove(newRow, newCol)) { // i actually dont think this does anything anmymore really
+                if (canMove(newRow, newCol, movetype)) { // i actually dont think this does anything anmymore really
                     ReturnPiece rp = Board.makeReturnPiece(this);
                     if (Board.hasPiece[newRow][newCol]) { // capture
-                        System.out.println("munch munch munch");
+                        // System.out.println("munch munch munch");
                         Board.removePiece(row, col);
                         row = newRow;
                         col = newCol;
@@ -148,13 +168,13 @@ public abstract class Piece {
                         Board.placePiece(this);
                     } else { // just move it
                         if (Board.returnPieces.remove(rp)) {
-                            System.out.println("PIECE FOUND!!");
+                            // System.out.println("PIECE FOUND!!");
                             Board.removePiece(row, col);
                             row = newRow;
                             col = newCol;
                             Board.placePiece(this);
                         } else {
-                            System.out.println("I wasn't found??");
+                            // System.out.println("I wasn't found??");
                         }
                     }
                     return 1; // move was legal, and made

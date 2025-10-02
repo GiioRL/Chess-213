@@ -8,8 +8,4 @@ public class Rook extends Piece {
         range = 7;
         moveTypes.add(MoveType.vertical);
     }
-
-    public boolean canMove(int row, int col) {
-        return cannibalCheck(row, col);
-    }
 }

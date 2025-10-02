@@ -8,8 +8,4 @@ public class Knight extends Piece {
         range = 3; //special case
         moveTypes.add(MoveType.knight);
     }
-
-    public boolean canMove(int row, int col) {
-        return cannibalCheck(row, col);
-    }
 }
