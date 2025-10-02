@@ -13,7 +13,7 @@ public abstract class Piece {
     int row; // 0 to 7 for rows 1 to 8
     int col; // 0 to 7 for columns a to h
     String coord;
-    int range;
+    // int range; // i dont think this is necessary
     ArrayList<MoveType> moveTypes;
     Piece[] seenBy;
 
@@ -27,22 +27,6 @@ public abstract class Piece {
 
     public String toString() {
         return "" + player + " " + type + " " + (char)('a' + col) + (8 - row);
-    }
-
-    public boolean canMove(int row, int col, MoveType movetype) { // cannibalCheck, check that no pieces in the path (unless knight), make sure move doesn't result in check on self, move in range.
-        if (cannibalCheck(row, col)) {
-            boolean bool = true;
-            // System.out.println("getting the path");
-            int[][] squares = getPath(row, col, movetype);
-            if (squares != null) {
-                for (int i = 0; i < squares.length; i++) {
-                    // System.out.println("checking square " + squares[i][0] + squares[i][1]);
-                    bool &= !Board.hasPiece[squares[i][0]][squares[i][1]];
-                }
-            }
-            return bool;
-        }
-        return false;
     }
 
     public boolean cannibalCheck(int row, int col) { //check for piece on this square has same color, if return false, then illegal move
@@ -80,6 +64,24 @@ public abstract class Piece {
         } else {
             return MoveType.illegal;
         }
+    }
+
+    public boolean canMove(int row, int col, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
+        if (moveTypes.contains(movetype)) {
+            if (cannibalCheck(row, col)) {
+                boolean bool = true;
+                // System.out.println("getting the path");
+                int[][] squares = getPath(row, col, movetype);
+                if (squares != null) {
+                    for (int i = 0; i < squares.length; i++) {
+                        // System.out.println("checking square " + squares[i][0] + squares[i][1]);
+                        bool &= !Board.hasPiece[squares[i][0]][squares[i][1]];
+                    }
+                }
+                return bool;
+            }
+        }
+        return false;
     }
 
     public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square
@@ -153,11 +155,19 @@ public abstract class Piece {
         return squares;
     }
 
+    public boolean sees(int newRow, int newCol) { //this may or may not be questionable
+        boolean bool = true;
+        for (MoveType movetype : moveTypes) {
+            bool &= canMove(newRow, newCol, movetype);
+        }
+        return bool;
+    }
+
     public int move(int newRow, int newCol) {
         MoveType movetype = classifyMove(newRow, newCol);
-        if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction
+        // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
             // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
-                if (canMove(newRow, newCol, movetype)) { // i actually dont think this does anything anmymore really
+                if (canMove(newRow, newCol, movetype)) {
                     ReturnPiece rp = Board.makeReturnPiece(this);
                     if (Board.hasPiece[newRow][newCol]) { // capture
                         // System.out.println("munch munch munch");
@@ -186,7 +196,7 @@ public abstract class Piece {
             // }
         // } else {
         //     return -1; //piece cannot move in this direction
-        }
+        // }
         return -1; //move is illegal and was not made
     }
 

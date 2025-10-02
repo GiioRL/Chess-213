@@ -1,6 +1,7 @@
 package chess;
 
 public class Pawn extends Piece {
+    int range;
     
     public Pawn(Player player, int row, int col) {
         super(player, row, col);
