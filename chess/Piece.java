@@ -169,8 +169,73 @@ public abstract class Piece {
             piece = Board.getPiece(newRow, newCol);
         }
         if (piece != null) {
-            pieces.add(piece);
+            if (player != piece.player) {
+                pieces.add(piece);
+            }
         }
+    }
+
+    public ArrayList<Piece> sees() { // this does NOT work because ++ and -- or something wrong look at it i haven't tried it yet
+        ArrayList<Piece> pieces = new ArrayList<Piece>();
+
+        for (MoveType movetype : moveTypes) {
+            int newRow = -1;
+            int newCol = -1;
+            if (movetype == MoveType.vertical) {
+                newRow = 0;
+                newCol = col;
+                while (newRow < row) {
+                    while (!Board.hasPiece[newRow++][newCol]);
+                }
+                if (newRow < row) {
+                    seePiece(newRow, newCol, pieces);
+                }
+                newRow = 7;
+                while (newRow > row) {
+                    while (!Board.hasPiece[newRow--][newCol]);
+                }
+                if (newRow < row) {
+                    seePiece(newRow, newCol, pieces);
+                }
+            } else if (movetype == MoveType.horizontal) {
+                newRow = row;
+                newCol = 0;
+                while (newCol < col) {
+                    while (!Board.hasPiece[newRow][newCol++]);
+                }
+                if (newCol < col) {
+                    seePiece(newRow, newCol, pieces);
+                }
+                newCol = 7;
+                while (newCol > col) {
+                    while (!Board.hasPiece[newRow][newCol--]);
+                }
+                if (newCol < col) {
+                    seePiece(newRow, newCol, pieces);
+                }
+            } else if (movetype == MoveType.horizontal) {
+                int min = Math.min(row, col);
+                int max = Math.max(row, col);
+                max = 8 - max;
+                newRow = row-min;
+                newCol = col=min;
+                while (newRow < row) {
+                    while (!Board.hasPiece[newRow++][newCol++]);
+                }
+                if (newRow < row) {
+                    seePiece(newRow, newCol, pieces);
+                }
+                newRow = row+max;
+                newCol = col+max;
+                while (newRow > row) {
+                    while(!Board.hasPiece[newRow--][newCol--]);
+                }
+                if (newRow > row) {
+                    seePiece(newRow, newCol, pieces);
+                }
+            }
+        }
+        return pieces;
     }
 
     public int move(int newRow, int newCol) {
