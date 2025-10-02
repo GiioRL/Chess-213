@@ -175,62 +175,96 @@ public abstract class Piece {
         }
     }
 
-    public ArrayList<Piece> sees() { // this does NOT work because ++ and -- or something wrong look at it i haven't tried it yet
+    public ArrayList<Piece> sees() { // this WORKS
         ArrayList<Piece> pieces = new ArrayList<Piece>();
 
         for (MoveType movetype : moveTypes) {
             int newRow = -1;
             int newCol = -1;
             if (movetype == MoveType.vertical) {
-                newRow = 0;
+                newRow = row;
                 newCol = col;
-                while (newRow < row) {
-                    while (!Board.hasPiece[newRow++][newCol]);
+                while (newRow > 0) {
+                    if (Board.hasPiece[--newRow][newCol]) {
+                        break;
+                    }
                 }
-                if (newRow < row) {
+                if (newRow >= 0) {
                     seePiece(newRow, newCol, pieces);
                 }
-                newRow = 7;
-                while (newRow > row) {
-                    while (!Board.hasPiece[newRow--][newCol]);
+                newRow = row;
+                while (newRow < 7) {
+                    if (Board.hasPiece[++newRow][newCol]) {
+                        break;
+                    }
                 }
-                if (newRow < row) {
+                if (newRow <= 7) {
                     seePiece(newRow, newCol, pieces);
                 }
             } else if (movetype == MoveType.horizontal) {
                 newRow = row;
-                newCol = 0;
-                while (newCol < col) {
-                    while (!Board.hasPiece[newRow][newCol++]);
+                newCol = col;
+                while (newCol > 0) {
+                    if (Board.hasPiece[newRow][--newCol]) {
+                        break;
+                    } //problem here newCol
                 }
-                if (newCol < col) {
+                if (newCol >= 0) {
                     seePiece(newRow, newCol, pieces);
                 }
-                newCol = 7;
-                while (newCol > col) {
-                    while (!Board.hasPiece[newRow][newCol--]);
+                newCol = col;
+                while (newCol < 7) {
+                    if (Board.hasPiece[newRow][++newCol]) {
+                        break;
+                    }
                 }
-                if (newCol < col) {
+                if (newCol <= 7) {
                     seePiece(newRow, newCol, pieces);
                 }
-            } else if (movetype == MoveType.horizontal) {
+            } else if (movetype == MoveType.diagonal) { // and check the other direction
                 int min = Math.min(row, col);
-                int max = Math.max(row, col);
-                max = 8 - max;
-                newRow = row-min;
-                newCol = col=min;
-                while (newRow < row) {
-                    while (!Board.hasPiece[newRow++][newCol++]);
+                int max = Math.min(7-row, 7-col);
+                newRow = row;
+                newCol = col;
+                while (newRow > row-min) {
+                    if (Board.hasPiece[--newRow][--newCol]) {
+                        break;
+                    }
                 }
-                if (newRow < row) {
+                if (newRow >= row-min) {
                     seePiece(newRow, newCol, pieces);
                 }
-                newRow = row+max;
-                newCol = col+max;
-                while (newRow > row) {
-                    while(!Board.hasPiece[newRow--][newCol--]);
+                newRow = row;
+                newCol = col;
+                while (newRow < row+max) {
+                    System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
+                    if (Board.hasPiece[++newRow][++newCol]){
+                        break;
+                    }
                 }
-                if (newRow > row) {
+                if (newRow <= row+max) {
+                    seePiece(newRow, newCol, pieces);
+                }
+                min = Math.min(row, 7-col);
+                max = Math.min(7-row, col);
+                newRow = row;
+                newCol = col;
+                while (newRow > row-min) {
+                    if (Board.hasPiece[--newRow][++newCol]) {
+                        break;
+                    }
+                }
+                if (newRow >= row-min) {
+                    seePiece(newRow, newCol, pieces);
+                }
+                newRow = row;
+                newCol = col;
+                while (newRow < row+max) {
+                    if (Board.hasPiece[++newRow][--newCol]) {
+                        break;
+                    }
+                }
+                if (newRow <= row+max) {
                     seePiece(newRow, newCol, pieces);
                 }
             }
@@ -263,6 +297,10 @@ public abstract class Piece {
                         }
                     }
                     //seenBy
+                    ArrayList<Piece> pieces = sees();
+                    for (Piece piece : pieces) {
+                        System.out.println(piece);
+                    }
                     return 1; // move was legal, and made
                 // } else {
                 //     return -1; // move is legal for this piece (may be deleted) ??

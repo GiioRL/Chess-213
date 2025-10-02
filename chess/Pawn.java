@@ -18,10 +18,15 @@ public class Pawn extends Piece {
             if (movetype == MoveType.vertical) {
                 if (!Board.hasPiece[newRow][newCol]) {
                     if (player == Player.white) {
-                        // System.out.println("" + player + row + newRow);
-                        return ((row > newRow) && (row - newRow) <= range);
+                        System.out.println("player is white");
+                        if (!Board.hasPiece[row-1][newCol]) {
+                            System.out.println("clear up ahead");
+                            return ((row > newRow) && (row - newRow) <= range);
+                        }
                     } else {
-                        return ((newRow > row) && (newRow - row) <= range);
+                        if (!Board.hasPiece[row+1][newCol]) {
+                            return ((newRow > row) && (newRow - row) <= range);
+                        }
                     }
                 } else {
                     return false;
@@ -33,15 +38,16 @@ public class Pawn extends Piece {
                     } else {
                         return ((newRow > row) && (newRow - row) <= 1);
                     }
-                } else { // can condense all return falses
-                    return false;
+                // } else { // can condense all return falses
+                    // return false;
                 }
-            } else {
-                return false;
+            // } else {
+                // return false;
             }
-        } else {
-            return false;
+        // } else {
+            // return false;
         }
+        return false;
     }
 
     public boolean seesSquare(int newRow, int newCol) {
@@ -61,7 +67,7 @@ public class Pawn extends Piece {
         return pieces;
     }
 
-    public int move(int newRow, int newCol) {
+    public int move(int newRow, int newCol) { // pawn can jump 2 squares through a piece
         int num = super.move(newRow, newCol);
         if (num == 1) {
             range = 1;

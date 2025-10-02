@@ -6,5 +6,6 @@ public class Rook extends Piece {
         super(player, row, col);
         type = Type.rook;
         moveTypes.add(MoveType.vertical);
+        moveTypes.add(MoveType.horizontal);
     }
 }
