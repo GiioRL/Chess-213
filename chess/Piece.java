@@ -155,12 +155,22 @@ public abstract class Piece {
         return squares;
     }
 
-    public boolean sees(int newRow, int newCol) { //this may or may not be questionable
+    public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
         boolean bool = true;
         for (MoveType movetype : moveTypes) {
             bool &= canMove(newRow, newCol, movetype);
         }
         return bool;
+    }
+
+    public void seePiece(int newRow, int newCol, ArrayList<Piece> pieces) {
+        Piece piece = null;
+        if (Board.validSquare(newRow, newCol)) {
+            piece = Board.getPiece(newRow, newCol);
+        }
+        if (piece != null) {
+            pieces.add(piece);
+        }
     }
 
     public int move(int newRow, int newCol) {
@@ -187,6 +197,7 @@ public abstract class Piece {
                             // System.out.println("I wasn't found??");
                         }
                     }
+                    //seenBy
                     return 1; // move was legal, and made
                 // } else {
                 //     return -1; // move is legal for this piece (may be deleted) ??

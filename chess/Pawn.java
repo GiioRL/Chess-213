@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.ArrayList;
+
 public class Pawn extends Piece {
     int range;
     
@@ -40,6 +42,23 @@ public class Pawn extends Piece {
         } else {
             return false;
         }
+    }
+
+    public boolean seesSquare(int newRow, int newCol) {
+        return canMove(newRow, newCol, MoveType.diagonal);
+    }
+
+    public ArrayList<Piece> sees() {
+        int newRow = row; // placeholder
+        ArrayList<Piece> pieces = new ArrayList<Piece>();
+        if (player == Player.white) {
+            newRow = row - 1;
+        } else {
+            newRow = row = 1;
+        }
+        seePiece(newRow, col-1, pieces);
+        seePiece(newRow, col+1, pieces);
+        return pieces;
     }
 
     public int move(int newRow, int newCol) {

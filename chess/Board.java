@@ -57,7 +57,11 @@ public class Board {
             return false;
         }
         int[] coord = coordConverter(square);
-        return (coord[0] >= 0 && coord[0] <= 7 && coord[1] >= 0 && coord[1] <= 7);
+        return validSquare(coord[0], coord[1]);
+    }
+
+    public static boolean validSquare(int row, int col) {
+        return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
     public static ReturnPiece makeReturnPiece(Piece piece) {

@@ -1,6 +1,7 @@
 package chess;
 
 import java.lang.Math;
+import java.util.ArrayList;
 
 public class King extends Piece {
 
@@ -19,5 +20,17 @@ public class King extends Piece {
             }
         }
         return false;
+    }
+
+    public ArrayList<Piece> sees() {
+        ArrayList<Piece> pieces = new ArrayList<Piece>();
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if ((i != 0) && (j != 0)) {
+                    seePiece(row+i, row+j, pieces);
+                }
+            }
+        }
+        return pieces;
     }
 }
