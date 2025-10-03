@@ -269,13 +269,13 @@ public abstract class Piece {
         return pieces;
     }
 
-    public int move(int newRow, int newCol) {
+    public int move(int newRow, int newCol, ReturnPlay rp) {
         // if (player == Board.player) { // MUST TURN THIS BACK ON
             MoveType movetype = classifyMove(newRow, newCol);
             // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
                 // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
                     if (canMove(newRow, newCol, movetype)) {
-                        ReturnPiece rp = Board.makeReturnPiece(this);
+                        ReturnPiece rP = Board.makeReturnPiece(this);
                         if (Board.hasPiece[newRow][newCol]) { // capture
                             // System.out.println("munch munch munch");
                             Board.removePiece(row, col);
@@ -284,7 +284,7 @@ public abstract class Piece {
                             Board.removePiece(row, col);
                             Board.placePiece(this);
                         } else { // just move it
-                            if (Board.returnPieces.remove(rp)) {
+                            if (Board.returnPieces.remove(rP)) {
                                 // System.out.println("PIECE FOUND!!");
                                 Board.removePiece(row, col);
                                 row = newRow;
@@ -298,6 +298,9 @@ public abstract class Piece {
                         for (Piece piece : pieces) {
                             // System.out.println("" + this + " sees " + piece);
                             piece.seenBy.add(this);
+                            if (piece.type == Type.king) {
+                                rp.message = ReturnPlay.Message.CHECK;
+                            }
                         }
                         seenBy.clear();
                         Piece dummy = new Queen(player, row, col);
@@ -329,8 +332,8 @@ public abstract class Piece {
         return -1; //move is illegal and was not made
     }
 
-    public int move(String coord) { // move d8 h1 did not work
+    public int move(String coord, ReturnPlay rp) { // move d8 h1 did not work
         int[] newCoord = Board.coordConverter(coord);
-        return move(newCoord[0], newCoord[1]);
+        return move(newCoord[0], newCoord[1], rp);
     }
 }

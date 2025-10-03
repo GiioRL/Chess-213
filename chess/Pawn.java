@@ -67,8 +67,8 @@ public class Pawn extends Piece {
         return pieces;
     }
 
-    public int move(int newRow, int newCol) { // pawn can jump 2 squares through a piece
-        int num = super.move(newRow, newCol);
+    public int move(int newRow, int newCol, ReturnPlay rp) { // pawn can jump 2 squares through a piece
+        int num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
         }
