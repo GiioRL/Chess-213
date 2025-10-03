@@ -15,7 +15,7 @@ public abstract class Piece {
     String coord;
     // int range; // i dont think this is necessary
     ArrayList<MoveType> moveTypes;
-    Piece[] seenBy;
+    ArrayList<Piece> seenBy;
 
     public Piece(Player player, int row, int col) {
         this.player = player;
@@ -23,6 +23,7 @@ public abstract class Piece {
         this.col = col;
         coord = Board.coordConverter(row, col);
         moveTypes = new ArrayList<MoveType>();
+        seenBy = new ArrayList<Piece>();
     }
 
     public String toString() {
@@ -156,11 +157,7 @@ public abstract class Piece {
     }
 
     public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
-        boolean bool = true;
-        for (MoveType movetype : moveTypes) {
-            bool &= canMove(newRow, newCol, movetype);
-        }
-        return bool;
+        return canMove(newRow, newCol, classifyMove(newRow, newCol));
     }
 
     public void seePiece(int newRow, int newCol, ArrayList<Piece> pieces) {
@@ -237,7 +234,7 @@ public abstract class Piece {
                 newRow = row;
                 newCol = col;
                 while (newRow < row+max) {
-                    System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
+                    // System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
                     if (Board.hasPiece[++newRow][++newCol]){
                         break;
                     }
@@ -273,44 +270,62 @@ public abstract class Piece {
     }
 
     public int move(int newRow, int newCol) {
-        MoveType movetype = classifyMove(newRow, newCol);
-        // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
-            // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
-                if (canMove(newRow, newCol, movetype)) {
-                    ReturnPiece rp = Board.makeReturnPiece(this);
-                    if (Board.hasPiece[newRow][newCol]) { // capture
-                        // System.out.println("munch munch munch");
-                        Board.removePiece(row, col);
-                        row = newRow;
-                        col = newCol;
-                        Board.removePiece(row, col);
-                        Board.placePiece(this);
-                    } else { // just move it
-                        if (Board.returnPieces.remove(rp)) {
-                            // System.out.println("PIECE FOUND!!");
+        // if (player == Board.player) { // MUST TURN THIS BACK ON
+            MoveType movetype = classifyMove(newRow, newCol);
+            // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
+                // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
+                    if (canMove(newRow, newCol, movetype)) {
+                        ReturnPiece rp = Board.makeReturnPiece(this);
+                        if (Board.hasPiece[newRow][newCol]) { // capture
+                            // System.out.println("munch munch munch");
                             Board.removePiece(row, col);
                             row = newRow;
                             col = newCol;
+                            Board.removePiece(row, col);
                             Board.placePiece(this);
-                        } else {
-                            // System.out.println("I wasn't found??");
+                        } else { // just move it
+                            if (Board.returnPieces.remove(rp)) {
+                                // System.out.println("PIECE FOUND!!");
+                                Board.removePiece(row, col);
+                                row = newRow;
+                                col = newCol;
+                                Board.placePiece(this);
+                            } else {
+                                // System.out.println("I wasn't found??");
+                            }
                         }
+                        ArrayList<Piece> pieces = sees();
+                        for (Piece piece : pieces) {
+                            // System.out.println("" + this + " sees " + piece);
+                            piece.seenBy.add(this);
+                        }
+                        seenBy.clear();
+                        Piece dummy = new Queen(player, row, col);
+                        pieces = dummy.sees();
+                        for (Piece piece : pieces) {
+                            // System.out.println("using " + piece + "'s eyes");
+                            if (piece.seesSquare(row, col)) {
+                                // System.out.println("" + piece + " sees " + this);
+                                seenBy.add(piece);
+                            }
+                        }
+                        if (player == Player.white) {
+                            Board.player = Player.black;
+                        } else {
+                            Board.player = Player.white;
+                        }
+                        return 1; // move was legal, and made
+                    // } else {
+                    //     return -1; // move is legal for this piece (may be deleted) ??
                     }
-                    //seenBy
-                    ArrayList<Piece> pieces = sees();
-                    for (Piece piece : pieces) {
-                        System.out.println(piece);
-                    }
-                    return 1; // move was legal, and made
-                // } else {
-                //     return -1; // move is legal for this piece (may be deleted) ??
-                }
-            // } else { // piece is eating its own color
-            //     return -1;
+                // } else { // piece is eating its own color
+                //     return -1;
+                // }
+            // } else {
+            //     return -1; //piece cannot move in this direction
             // }
-        // } else {
-        //     return -1; //piece cannot move in this direction
-        // }
+            
+        // } MUST TURN THIS BACK ON
         return -1; //move is illegal and was not made
     }
 

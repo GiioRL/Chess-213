@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Chess {
 
-        enum Player { white, black }
+        enum Player { white, black } // chat i have not been using this at all.. feel free to convert to this one
 		static Piece[] pieces = new Piece[32];
     
 	/**
@@ -45,7 +45,7 @@ public class Chess {
 	 */
 	public static void start() {
 		// System.out.println("holy crap chat we're about to play chess\n");
-		Board.returnPieces.clear(); // clear old pieces in case of reset
+		Board.reset();
 		int i = 0;
 		Piece.Type type;
 		Piece.Player player;
