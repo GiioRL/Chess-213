@@ -47,6 +47,15 @@ public class Board {
         return piece;
     }
 
+    public static int removePiece(Piece piece) { // is this concerning
+        int row = piece.row;
+        int col = piece.col;
+        if (removePiece(row, col) != null) {
+            return 1;
+        }
+        return 0;
+    }
+
     public static String coordConverter(int row, int col) { // check this guy
         return "" + (char)('a' + col) + (row + '0');
     }
@@ -67,6 +76,215 @@ public class Board {
 
     public static boolean validSquare(int row, int col) {
         return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
+    }
+
+    public static int[][] findEdges(int row, int col, Piece.MoveType movetype) {
+        // for (MoveType movetype : moveTypes) {
+            int newRow = -1;
+            int newCol = -1;
+            int[][] squares = null;
+            if (movetype == Piece.MoveType.vertical) {
+                squares = new int[2][2];
+                newRow = row;
+                newCol = col;
+                while (newRow > 0) {
+                    if (Board.hasPiece[--newRow][newCol]) {
+                        break;
+                    }
+                }
+                squares[0][0] = newRow;
+                squares[0][1] = newCol;
+                newRow = row;
+                while (newRow < 7) {
+                    if (Board.hasPiece[++newRow][newCol]) {
+                        break;
+                    }
+                }
+                squares[1][0] = newRow;
+                squares[1][1] = newCol;
+            } else if (movetype == Piece.MoveType.horizontal) {
+                squares = new int[2][2];
+                newRow = row;
+                newCol = col;
+                while (newCol > 0) {
+                    if (Board.hasPiece[newRow][--newCol]) {
+                        break;
+                    }
+                }
+                squares[0][0] = newRow;
+                squares[0][1] = newCol;
+                newCol = col;
+                while (newCol < 7) {
+                    if (Board.hasPiece[newRow][++newCol]) {
+                        break;
+                    }
+                }
+                squares[1][0] = newRow;
+                squares[1][1] = newCol;
+            } else if (movetype == Piece.MoveType.diagonal) { // and check the other direction
+                squares = new int[4][2];
+                int min = Math.min(row, col);
+                int max = Math.min(7-row, 7-col);
+                newRow = row;
+                newCol = col;
+                while (newRow > row-min) {
+                    if (Board.hasPiece[--newRow][--newCol]) {
+                        break;
+                    }
+                }
+                squares[0][0] = newRow;
+                squares[0][1] = newCol;
+                newRow = row;
+                newCol = col;
+                while (newRow < row+max) {
+                    // System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
+                    if (Board.hasPiece[++newRow][++newCol]){
+                        break;
+                    }
+                }
+                squares[1][0] = newRow;
+                squares[1][1] = newCol;
+                min = Math.min(row, 7-col);
+                max = Math.min(7-row, col);
+                newRow = row;
+                newCol = col;
+                while (newRow > row-min) {
+                    if (Board.hasPiece[--newRow][++newCol]) {
+                        break;
+                    }
+                }
+                squares[2][0] = newRow;
+                squares[2][1] = newCol;
+                newRow = row;
+                newCol = col;
+                while (newRow < row+max) {
+                    if (Board.hasPiece[++newRow][--newCol]) {
+                        break;
+                    }
+                }
+                squares[3][0] = newRow;
+                squares[3][1] = newCol;
+            }
+            return squares;
+        // }
+    }
+
+    public static int[][] getPath(int row, int col, int newRow, int newCol, Piece.MoveType movetype) { // return IN ORDER the squares in between this piece's square and target square
+        // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
+        int[][] squares = null;
+        // int lo = -1; // kill
+        // int hi = -1; //kill
+        int i = 0;
+        boolean bool = false;
+        int tempRow = -1;
+        int tempCol = -1;
+        if (movetype == Piece.MoveType.vertical) {
+            squares = new int[Math.abs(row - newRow) - 1][2];
+            if (row < newRow) {
+                bool = true;
+                tempRow = row + 1;
+            } else {
+                bool = false;
+                tempRow = row - 1;
+            }
+            // System.out.println("lo: " + lo + "hi: " + hi);
+            tempCol = col;
+
+            if (bool) {
+                while (row != newRow) {
+                    squares[i][0] = tempRow++;
+                    squares[i++][1] = tempCol;
+                }
+            } else {
+                while (tempRow != newRow) {
+                    squares[i][0] = tempRow--;
+                    squares[i++][1] = tempCol;
+                }
+            }
+
+        } else if (movetype == Piece.MoveType.horizontal) {
+            squares = new int[Math.abs(col - newCol) - 1][2];
+            if (col < newCol) {
+                bool = true;
+                tempCol = col + 1;
+            } else {
+                bool = false;
+                tempCol = col - 1;
+            }
+            // System.out.println("lo: " + lo + "hi: " + hi);
+            tempRow = row;
+            if (bool) {
+                while (tempCol != newCol) {
+                    squares[i][0] = tempRow;
+                    squares[i++][1] = tempCol++;
+                }
+            } else {
+                while (tempCol != newCol) {
+                    squares[i][0] = tempRow;
+                    squares[i++][1] = tempCol--;
+                }
+            }
+        } else if (movetype == Piece.MoveType.diagonal) {
+            squares = new int[Math.abs(row - newRow) - 1][2];
+            boolean bool2 = false;
+            int temp = -1;
+            if (row < newRow) {
+                bool = true;
+                tempRow = row + 1;
+            } else {
+                bool = false;
+                tempRow = row - 1;
+            }
+            if (col < newCol) {
+                bool2 = true;
+                tempCol = col + 1;
+            } else {
+                bool2 = false;
+                tempCol = col - 1;
+            }
+            // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
+
+            // lo++;
+            // if (bool) {
+            //     temp++;
+            //     while (lo < hi) {
+            //         squares[i][0] = lo++;
+            //         squares[i++][1] = temp++;
+            //     }
+            // } else {
+            //     temp--;
+            //     while (lo < hi) {
+            //         squares[i][0] = lo++;
+            //         squares[i++][1] = temp--;
+            //     } 
+            // }
+            if (bool) {
+                if (bool2) {
+                    while (tempRow != newRow) {
+                        squares[i][0] = tempRow++;
+                        squares[i++][1] = tempCol++;
+                    }
+                } else {
+                    while (tempRow != newRow) {
+                        squares[i][0] = tempRow++;
+                        squares[i++][1] = tempCol--;
+                    }
+                }
+            } else {
+                if (bool2) {
+                    while (tempRow != newRow) {
+                        squares[i][0] = tempRow--;
+                        squares[i++][1] = tempCol++;
+                    }
+                } else {
+                    while (tempRow != newRow) {
+                        squares[i][0] = tempRow--;
+                        squares[i++][1] = tempCol--;
+                    }
+                }
+            }
+        }
+        return squares;
     }
 
     public static ReturnPiece makeReturnPiece(Piece piece) {

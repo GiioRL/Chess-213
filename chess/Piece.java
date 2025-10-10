@@ -67,12 +67,12 @@ public abstract class Piece {
         }
     }
 
-    public boolean canMove(int row, int col, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
+    public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
         if (moveTypes.contains(movetype)) {
-            if (cannibalCheck(row, col)) {
+            if (cannibalCheck(newRow, newCol)) {
                 boolean bool = true;
                 // System.out.println("getting the path");
-                int[][] squares = getPath(row, col, movetype);
+                int[][] squares = Board.getPath(row, col, newRow, newCol, movetype);
                 if (squares != null) {
                     for (int i = 0; i < squares.length; i++) {
                         // System.out.println("checking square " + squares[i][0] + squares[i][1]);
@@ -85,76 +85,76 @@ public abstract class Piece {
         return false;
     }
 
-    public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square
-        // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
-        int[][] squares = null;
-        int lo = -1;
-        int hi = -1;
-        int i = 0;
-        if (movetype == MoveType.vertical) {
-            squares = new int[Math.abs(row - newRow) - 1][2];
-            if (row < newRow) {
-                lo = row;
-                hi = newRow;
-            } else {
-                lo = newRow;
-                hi = row;
-            }
-            // System.out.println("lo: " + lo + "hi: " + hi);
-            lo++;
-            while (lo < hi) {
-                squares[i][0] = lo++;
-                squares[i++][1] = col;
-            }
-        } else if (movetype == MoveType.horizontal) {
-            squares = new int[Math.abs(col - newCol) - 1][2];
-            if (col < newCol) {
-                lo = col;
-                hi = newCol;
-            } else {
-                lo = newCol;
-                hi = col;
-            }
-            // System.out.println("lo: " + lo + "hi: " + hi);
-            lo++;
-            while (lo < hi) {
-                squares[i][0] = row;
-                squares[i++][1] = lo++;
-            }
-        } else if (movetype == MoveType.diagonal) {
-            squares = new int[Math.abs(row - newRow) - 1][2];
-            boolean bool = false;
-            int temp = -1;
-            if (row < newRow) {
-                lo = row;
-                hi = newRow;
-                bool = (col < newCol);
-                temp = col;
-            } else {
-                lo = newRow;
-                hi = row;
-                bool = (newCol < col);
-                temp = newCol;
-            }
-            // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
+    // public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square // moved to Board
+    //     // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
+    //     int[][] squares = null;
+    //     int lo = -1;
+    //     int hi = -1;
+    //     int i = 0;
+    //     if (movetype == MoveType.vertical) {
+    //         squares = new int[Math.abs(row - newRow) - 1][2];
+    //         if (row < newRow) {
+    //             lo = row;
+    //             hi = newRow;
+    //         } else {
+    //             lo = newRow;
+    //             hi = row;
+    //         }
+    //         // System.out.println("lo: " + lo + "hi: " + hi);
+    //         lo++;
+    //         while (lo < hi) {
+    //             squares[i][0] = lo++;
+    //             squares[i++][1] = col;
+    //         }
+    //     } else if (movetype == MoveType.horizontal) {
+    //         squares = new int[Math.abs(col - newCol) - 1][2];
+    //         if (col < newCol) {
+    //             lo = col;
+    //             hi = newCol;
+    //         } else {
+    //             lo = newCol;
+    //             hi = col;
+    //         }
+    //         // System.out.println("lo: " + lo + "hi: " + hi);
+    //         lo++;
+    //         while (lo < hi) {
+    //             squares[i][0] = row;
+    //             squares[i++][1] = lo++;
+    //         }
+    //     } else if (movetype == MoveType.diagonal) {
+    //         squares = new int[Math.abs(row - newRow) - 1][2];
+    //         boolean bool = false;
+    //         int temp = -1;
+    //         if (row < newRow) {
+    //             lo = row;
+    //             hi = newRow;
+    //             bool = (col < newCol);
+    //             temp = col;
+    //         } else {
+    //             lo = newRow;
+    //             hi = row;
+    //             bool = (newCol < col);
+    //             temp = newCol;
+    //         }
+    //         // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
 
-            lo++;
-            if (bool) {
-                temp++;
-                while (lo < hi) {
-                    squares[i][0] = lo++;
-                    squares[i++][1] = temp++;
-                }
-            } else {
-                temp--;
-                while (lo < hi) {
-                    squares[i][0] = lo++;
-                    squares[i++][1] = temp--;
-                } 
-            }
-        }
-        return squares;
-    }
+    //         lo++;
+    //         if (bool) {
+    //             temp++;
+    //             while (lo < hi) {
+    //                 squares[i][0] = lo++;
+    //                 squares[i++][1] = temp++;
+    //             }
+    //         } else {
+    //             temp--;
+    //             while (lo < hi) {
+    //                 squares[i][0] = lo++;
+    //                 squares[i++][1] = temp--;
+    //             } 
+    //         }
+    //     }
+    //     return squares;
+    // }
 
     public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
         return canMove(newRow, newCol, classifyMove(newRow, newCol));
@@ -172,102 +172,153 @@ public abstract class Piece {
         }
     }
 
-    public ArrayList<Piece> sees() { // this WORKS
+    public void seePiece(int[] coord, ArrayList<Piece> pieces) {
+        seePiece(coord[0], coord[1], pieces);
+    }
+
+    public Piece seeThrough(Piece piece) {
+        int newRow = piece.row;
+        int newCol = piece.col;
+        MoveType movetype = classifyMove(newRow, newCol);
+        Board.removePiece(piece);
+        int[][] squares = Board.findEdges(row, col, movetype);
+        int index = -1;
+        for (int i = 0; i < squares.length; i++) {
+            int[][] path = Board.getPath(row, col, squares[i][0], squares[i][1], movetype);
+            if (path[i][0] == newRow) {
+                if (path[i][1] == newCol) {
+                    index = i;
+                    break;
+                }
+            }
+        }
+        int[][] path = Board.getPath(newRow, newCol, squares[index][0], squares[index][col], movetype);
+        Piece target = null;
+        for (int i = 0; i < path.length; i++) {
+            int tempRow = path[i][0];
+            int tempCol = path[i][1];
+            if (Board.hasPiece[tempRow][tempCol]) {
+                target = Board.getPiece(tempRow, tempCol);
+                break;
+            }
+        }
+        return target;
+    }
+
+    public ArrayList<Piece> sees() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
 
         for (MoveType movetype : moveTypes) {
-            int newRow = -1;
-            int newCol = -1;
-            if (movetype == MoveType.vertical) {
-                newRow = row;
-                newCol = col;
-                while (newRow > 0) {
-                    if (Board.hasPiece[--newRow][newCol]) {
-                        break;
-                    }
-                }
-                if (newRow >= 0) {
-                    seePiece(newRow, newCol, pieces);
-                }
-                newRow = row;
-                while (newRow < 7) {
-                    if (Board.hasPiece[++newRow][newCol]) {
-                        break;
-                    }
-                }
-                if (newRow <= 7) {
-                    seePiece(newRow, newCol, pieces);
-                }
-            } else if (movetype == MoveType.horizontal) {
-                newRow = row;
-                newCol = col;
-                while (newCol > 0) {
-                    if (Board.hasPiece[newRow][--newCol]) {
-                        break;
-                    } //problem here newCol
-                }
-                if (newCol >= 0) {
-                    seePiece(newRow, newCol, pieces);
-                }
-                newCol = col;
-                while (newCol < 7) {
-                    if (Board.hasPiece[newRow][++newCol]) {
-                        break;
-                    }
-                }
-                if (newCol <= 7) {
-                    seePiece(newRow, newCol, pieces);
-                }
-            } else if (movetype == MoveType.diagonal) { // and check the other direction
-                int min = Math.min(row, col);
-                int max = Math.min(7-row, 7-col);
-                newRow = row;
-                newCol = col;
-                while (newRow > row-min) {
-                    if (Board.hasPiece[--newRow][--newCol]) {
-                        break;
-                    }
-                }
-                if (newRow >= row-min) {
-                    seePiece(newRow, newCol, pieces);
-                }
-                newRow = row;
-                newCol = col;
-                while (newRow < row+max) {
-                    // System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
-                    if (Board.hasPiece[++newRow][++newCol]){
-                        break;
-                    }
-                }
-                if (newRow <= row+max) {
-                    seePiece(newRow, newCol, pieces);
-                }
-                min = Math.min(row, 7-col);
-                max = Math.min(7-row, col);
-                newRow = row;
-                newCol = col;
-                while (newRow > row-min) {
-                    if (Board.hasPiece[--newRow][++newCol]) {
-                        break;
-                    }
-                }
-                if (newRow >= row-min) {
-                    seePiece(newRow, newCol, pieces);
-                }
-                newRow = row;
-                newCol = col;
-                while (newRow < row+max) {
-                    if (Board.hasPiece[++newRow][--newCol]) {
-                        break;
-                    }
-                }
-                if (newRow <= row+max) {
-                    seePiece(newRow, newCol, pieces);
+            int[][] edges = Board.findEdges(row, col, movetype);
+            int[][] squares;
+            for (int i = 0; i < edges.length; i++) {
+                int newRow = edges[i][0];
+                int newCol = edges[i][1];
+                squares = Board.getPath(row, col, newRow, newCol, movetype);
+                for (int[] square : squares) {
+                    seePiece(square, pieces);
                 }
             }
         }
         return pieces;
     }
+
+    // public ArrayList<Piece> sees() { // this WORKS
+    //     ArrayList<Piece> pieces = new ArrayList<Piece>();
+
+    //     for (MoveType movetype : moveTypes) {
+    //         int newRow = -1;
+    //         int newCol = -1;
+    //         if (movetype == MoveType.vertical) {
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newRow > 0) {
+    //                 if (Board.hasPiece[--newRow][newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow >= 0) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //             newRow = row;
+    //             while (newRow < 7) {
+    //                 if (Board.hasPiece[++newRow][newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow <= 7) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //         } else if (movetype == MoveType.horizontal) {
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newCol > 0) {
+    //                 if (Board.hasPiece[newRow][--newCol]) {
+    //                     break;
+    //                 } //problem here newCol
+    //             }
+    //             if (newCol >= 0) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //             newCol = col;
+    //             while (newCol < 7) {
+    //                 if (Board.hasPiece[newRow][++newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newCol <= 7) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //         } else if (movetype == MoveType.diagonal) { // and check the other direction
+    //             int min = Math.min(row, col);
+    //             int max = Math.min(7-row, 7-col);
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newRow > row-min) {
+    //                 if (Board.hasPiece[--newRow][--newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow >= row-min) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newRow < row+max) {
+    //                 // System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
+    //                 if (Board.hasPiece[++newRow][++newCol]){
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow <= row+max) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //             min = Math.min(row, 7-col);
+    //             max = Math.min(7-row, col);
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newRow > row-min) {
+    //                 if (Board.hasPiece[--newRow][++newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow >= row-min) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //             newRow = row;
+    //             newCol = col;
+    //             while (newRow < row+max) {
+    //                 if (Board.hasPiece[++newRow][--newCol]) {
+    //                     break;
+    //                 }
+    //             }
+    //             if (newRow <= row+max) {
+    //                 seePiece(newRow, newCol, pieces);
+    //             }
+    //         }
+    //     }
+    //     return pieces;
+    // }
 
     public int move(int newRow, int newCol, ReturnPlay rp) {
         // if (player == Board.player) { // MUST TURN THIS BACK ON
