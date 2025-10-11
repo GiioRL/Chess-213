@@ -63,14 +63,14 @@ public class Pawn extends Piece {
         if (player == Player.white) {
             newRow = row - 1;
         } else {
-            newRow = row = 1;
+            newRow = row + 1;
         }
         seePiece(newRow, col-1, pieces);
         seePiece(newRow, col+1, pieces);
         return pieces;
     }
 
-    public int move(int newRow, int newCol, ReturnPlay rp) { // pawn can jump 2 squares through a piece
+    public int move(int newRow, int newCol, ReturnPlay rp) {
         int num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;

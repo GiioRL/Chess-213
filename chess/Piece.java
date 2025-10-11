@@ -67,7 +67,7 @@ public abstract class Piece {
         }
     }
 
-    public boolean selfCheck() { //returns false if move results in selfCheck
+    public boolean selfCheck() { //returns false if move results in self Check // infinite loop in line e2 e4; d1 h5; g7 g6; f7 f6
         Board.removePiece(this);
         boolean bool = true;
         if (player == Player.white) {
@@ -363,7 +363,7 @@ public abstract class Piece {
             // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
                 // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
                     if (canMove(newRow, newCol, movetype)) {
-                        ReturnPiece rP = Board.makeReturnPiece(this);
+                        // ReturnPiece rP = Board.makeReturnPiece(this);
                         if (Board.hasPiece[newRow][newCol]) { // capture
                             // System.out.println("munch munch munch");
                             // Board.removePiece(row, col);
@@ -373,16 +373,16 @@ public abstract class Piece {
                             col = newCol;
                             Board.placePiece(this);
                         } else { // just move it
-                            if (Board.returnPieces.remove(rP)) {
+                            // if (Board.returnPieces.remove(rP)) {
                                 // System.out.println("PIECE FOUND!!");
                                 // Board.removePiece(row, col);
                                 Board.removePiece(this);
                                 row = newRow;
                                 col = newCol;
                                 Board.placePiece(this);
-                            } else {
+                            // } else {
                                 // System.out.println("I wasn't found??");
-                            }
+                            // }
                         }
                         ArrayList<Piece> pieces = sees();
                         if (pieces.size() == 0) {

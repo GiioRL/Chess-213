@@ -47,7 +47,7 @@ public class Chess {
 		// System.out.println("holy crap chat we're about to play chess\n");
 		Board.reset();
 		int i = 0;
-		Piece.Type type;
+		// Piece.Type type;
 		Piece.Player player;
 		while (i < 32 ) {
 			while (i < 16) {
