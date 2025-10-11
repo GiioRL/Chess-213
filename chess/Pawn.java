@@ -15,34 +15,37 @@ public class Pawn extends Piece {
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) {
-            if (movetype == MoveType.vertical) {
-                if (!Board.hasPiece[newRow][newCol]) {
-                    if (player == Player.white) {
-                        System.out.println("player is white");
-                        if (!Board.hasPiece[row-1][newCol]) {
-                            System.out.println("clear up ahead");
-                            return ((row > newRow) && (row - newRow) <= range);
+            if (selfCheck(newRow, newCol)) {
+                if (movetype == MoveType.vertical) {
+                    if (!Board.hasPiece[newRow][newCol]) {
+                        if (player == Player.white) {
+                            // System.out.println("player is white");
+                            if (!Board.hasPiece[row-1][newCol]) {
+                                // System.out.println("clear up ahead");
+                                return ((row > newRow) && (row - newRow) <= range);
+                            }
+                        } else {
+                            // System.out.println("im black");
+                            if (!Board.hasPiece[row+1][newCol]) {
+                                return ((newRow > row) && (newRow - row) <= range);
+                            }
                         }
                     } else {
-                        if (!Board.hasPiece[row+1][newCol]) {
-                            return ((newRow > row) && (newRow - row) <= range);
+                        return false;
+                    }
+                } else if (movetype == MoveType.diagonal) {
+                    if (Board.hasPiece[newRow][newCol]) {
+                        if (player == Player.white) {
+                            return ((row > newRow) && (row - newRow) <= 1);
+                        } else {
+                            return ((newRow > row) && (newRow - row) <= 1);
                         }
+                    // } else { // can condense all return falses
+                        // return false;
                     }
-                } else {
-                    return false;
-                }
-            } else if (movetype == MoveType.diagonal) {
-                if (Board.hasPiece[newRow][newCol]) {
-                    if (player == Player.white) {
-                        return ((row > newRow) && (row - newRow) <= 1);
-                    } else {
-                        return ((newRow > row) && (newRow - row) <= 1);
-                    }
-                // } else { // can condense all return falses
+                // } else {
                     // return false;
                 }
-            // } else {
-                // return false;
             }
         // } else {
             // return false;
@@ -51,7 +54,15 @@ public class Pawn extends Piece {
     }
 
     public boolean seesSquare(int newRow, int newCol) {
-        return canMove(newRow, newCol, MoveType.diagonal);
+        if (player == Player.white) {
+            return ((row - newRow == 1) && (Math.abs(col - newCol) == 1));
+        } else {
+            return ((newRow - row == 1) && (Math.abs(newCol - col) == 1));
+        }
+    }
+
+    public Piece seeThrough(Piece piece) {
+        return null;
     }
 
     public ArrayList<Piece> sees() {
@@ -60,18 +71,75 @@ public class Pawn extends Piece {
         if (player == Player.white) {
             newRow = row - 1;
         } else {
-            newRow = row = 1;
+            newRow = row + 1;
         }
         seePiece(newRow, col-1, pieces);
         seePiece(newRow, col+1, pieces);
         return pieces;
     }
 
-    public int move(int newRow, int newCol, ReturnPlay rp) { // pawn can jump 2 squares through a piece
+    public void promotion(String type, ReturnPlay rp) {
+        Piece newPiece = null;
+        switch(type) {
+            case "R":
+            newPiece = new Rook(player, row, col);
+            break;
+            case "N":
+            newPiece = new Knight(player, row, col);
+            break;
+            case "B":
+            newPiece = new Bishop(player, row, col);
+            break;
+            case "Q":
+            newPiece = new Queen(player, row, col);
+            break;
+            default:
+            return;
+        }
+        Board.removePiece(this);
+        newPiece.seenBy = seenBy;
+        Board.placePiece(newPiece); // check for check with new piece
+        ArrayList<Piece> pieces = newPiece.sees();
+        for (Piece piece: pieces) {
+            piece.seenBy.add(newPiece);
+            if (piece.type == Type.king) {
+                newPiece.check(rp);
+                // rp.message = ReturnPlay.Message.CHECK;
+                // if (player == Player.white) {
+                //     King.blackCheck = true;
+                // } else {
+                //     King.whiteCheck = true;
+                // }
+            }
+        }
+    }
+
+    public int move(int newRow, int newCol, ReturnPlay rp) {
         int num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
         }
+        if (player == Player.white) {
+            if (newRow == 0) {
+                promotion("Q", rp);
+            }
+        } else {
+            if (newRow == 7) {
+                promotion("Q", rp);
+            }
+        }
         return num;
+    }
+
+    public int move(int newRow, int newCol, String newType, ReturnPlay rp) {
+        if (canMove(newRow, newCol, classifyMove(newRow, newCol))) {
+            if (newType.equals("R") || newType.equals("N") || newType.equals("B") || newType.equals("Q")) {
+                if (super.move(newRow, newCol, rp) == 1) {
+                    promotion(newType, rp);
+                    return 1;
+                }
+            }
+        }
+        return -1;
     }
 }
