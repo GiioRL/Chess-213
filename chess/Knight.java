@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.ArrayList;
+
 public class Knight extends Piece {
     
     public Knight(Player player, int row, int col) {
@@ -12,15 +14,15 @@ public class Knight extends Piece {
         return null;
     }
 
-    // public ArrayList<Piece> sees() {
-    //     ArrayList<Piece> pieces = new ArrayList<Piece>();
-    //     for (int i = -1; i <= 1; i++) {
-    //         for (int j = -1; j <= 1; j++) {
-    //             if (Math.abs(i) + Math.abs(j) == 3) {
-    //                 seePiece(row+i, row+j, pieces);
-    //             }
-    //         }
-    //     }
-    //     return pieces;
-    // }
+    public ArrayList<Piece> sees() {
+        ArrayList<Piece> pieces = new ArrayList<Piece>();
+        for (int i = -2; i <= 2; i++) {
+            for (int j = -2; j <= 2; j++) {
+                if (Math.abs(i) + Math.abs(j) == 3) {
+                    seePiece(row+i, row+j, pieces);
+                }
+            }
+        }
+        return pieces;
+    }
 }
