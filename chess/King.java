@@ -28,21 +28,28 @@ public class King extends Piece {
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
             if (moveTypes.contains(movetype)) {
+                Piece dummy = new Dummy(type, player, newRow, newCol);
+                Board.placePiece(dummy);
                 // Check if King would be in check by moving to (newRow, newCol)
-                Piece dummy = new Queen(player, newRow, newCol);
-                ArrayList<Piece> pieces = dummy.sees();
-                for (Piece piece : pieces)
-                    if (piece.seesSquare(newRow, newCol))
+                Piece dummier = new Dummy(Type.queen, player, newRow, newCol);
+                ArrayList<Piece> pieces = dummier.sees();
+                for (Piece piece : pieces) {
+                    if (piece.seesSquare(newRow, newCol)) {// queen f3 cant see king f6?
+                        Board.removePiece(dummy);
                         return false;
-                // Need to also account for knight attacking (newRow, newCol)
-                dummy = new Knight(player, newRow, newCol);
-                pieces = dummy.sees();
-                for (Piece piece : pieces)
-                {
-                    System.out.println(piece);
-                    if (piece.seesSquare(newRow, newCol))
-                        return false;
+                    }
                 }
+                // Need to also account for knight attacking (newRow, newCol)
+                dummier = new Dummy(Type.knight, player, newRow, newCol);
+                pieces = dummier.sees();
+                for (Piece piece : pieces) {
+                    System.out.println(piece);
+                    if (piece.seesSquare(newRow, newCol)) {
+                        Board.removePiece(dummy);
+                        return false;
+                    }       
+                }
+                Board.removePiece(dummy);
                 return (Math.abs(row-newRow) <= 1) && (Math.abs(col-newCol) <= 1);
             }
         }
