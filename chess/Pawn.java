@@ -15,7 +15,7 @@ public class Pawn extends Piece {
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) {
-            if (selfCheck()) {
+            if (selfCheck(newRow, newCol)) {
                 if (movetype == MoveType.vertical) {
                     if (!Board.hasPiece[newRow][newCol]) {
                         if (player == Player.white) {
@@ -54,7 +54,11 @@ public class Pawn extends Piece {
     }
 
     public boolean seesSquare(int newRow, int newCol) {
-        return canMove(newRow, newCol, MoveType.diagonal);
+        if (player == Player.white) {
+            return ((row - newRow == 1) && (Math.abs(col - newCol) == 1));
+        } else {
+            return ((newRow - row == 1) && (Math.abs(newCol - col) == 1));
+        }
     }
 
     public ArrayList<Piece> sees() {

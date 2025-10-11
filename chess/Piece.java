@@ -67,35 +67,49 @@ public abstract class Piece {
         }
     }
 
-    public boolean selfCheck() { //returns false if move results in self Check // infinite loop in line e2 e4; d1 h5; g7 g6; f7 f6
-        Board.removePiece(this);
-        boolean bool = true;
-        if (player == Player.white) {
-            for (Piece piece : seenBy) {
-                // System.out.println("using " + piece + "'s eyes");
-                if (piece.seesSquare(King.whiteKing)) {
-                    bool = false;
-                    break;
-                }
-            }
-        } else {
-            for (Piece piece : seenBy) {
-                // System.out.println("using " + piece + "'s eyes");
-                // System.out.println("Black King is on (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
-                if (piece.seesSquare(King.blackKing)) {
-                    bool = false;
-                    break;
+    public boolean selfCheck(int newRow, int newCol) { //returns false if move results in self Check // infinite loop in line e2 e4; d1 h5; g7 g6; f7 f6
+        // Board.removePiece(this);
+        // boolean bool = true;
+        // if (player == Player.white) {
+        //     for (Piece piece : seenBy) {
+        //         // System.out.println("using " + piece + "'s eyes");
+        //         if (piece.seesSquare(King.whiteKing)) {
+        //             bool = false;
+        //             break;
+        //         }
+        //     }
+        // } else {
+        //     for (Piece piece : seenBy) {
+        //         // System.out.println("using " + piece + "'s eyes");
+        //         // System.out.println("Black King is on (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
+        //         if (piece.seesSquare(King.blackKing)) {
+        //             bool = false;
+        //             break;
+        //         }
+        //     }
+        // }
+        // Board.placePiece(this);
+        // return bool;
+        for (Piece piece : seenBy) {
+            Piece target = piece.seeThrough(this);
+            if (target.type == Type.king) {
+                if (target.player == player) { // check if piece is EATING this guy >:D
+                    if (piece.row == newRow) {
+                        if (piece.col == newCol) {
+                            continue;
+                        }
+                    }
+                    return false;
                 }
             }
         }
-        Board.placePiece(this);
-        return bool;
+        return true;
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
         if (moveTypes.contains(movetype)) {
             if (cannibalCheck(newRow, newCol)) {
-                if (selfCheck()) {
+                if (selfCheck(newRow, newCol)) {
                     boolean bool = true;
                     // System.out.println("getting the path");
                     int[][] squares = Board.getPath(row, col, newRow, newCol, movetype);
@@ -112,79 +126,16 @@ public abstract class Piece {
         return false;
     }
 
-    // public int[][] getPath(int newRow, int newCol, MoveType movetype) { // return the squares in between this piece's square and target square // moved to Board
-    //     // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
-    //     int[][] squares = null;
-    //     int lo = -1;
-    //     int hi = -1;
-    //     int i = 0;
-    //     if (movetype == MoveType.vertical) {
-    //         squares = new int[Math.abs(row - newRow) - 1][2];
-    //         if (row < newRow) {
-    //             lo = row;
-    //             hi = newRow;
-    //         } else {
-    //             lo = newRow;
-    //             hi = row;
-    //         }
-    //         // System.out.println("lo: " + lo + "hi: " + hi);
-    //         lo++;
-    //         while (lo < hi) {
-    //             squares[i][0] = lo++;
-    //             squares[i++][1] = col;
-    //         }
-    //     } else if (movetype == MoveType.horizontal) {
-    //         squares = new int[Math.abs(col - newCol) - 1][2];
-    //         if (col < newCol) {
-    //             lo = col;
-    //             hi = newCol;
-    //         } else {
-    //             lo = newCol;
-    //             hi = col;
-    //         }
-    //         // System.out.println("lo: " + lo + "hi: " + hi);
-    //         lo++;
-    //         while (lo < hi) {
-    //             squares[i][0] = row;
-    //             squares[i++][1] = lo++;
-    //         }
-    //     } else if (movetype == MoveType.diagonal) {
-    //         squares = new int[Math.abs(row - newRow) - 1][2];
-    //         boolean bool = false;
-    //         int temp = -1;
-    //         if (row < newRow) {
-    //             lo = row;
-    //             hi = newRow;
-    //             bool = (col < newCol);
-    //             temp = col;
-    //         } else {
-    //             lo = newRow;
-    //             hi = row;
-    //             bool = (newCol < col);
-    //             temp = newCol;
-    //         }
-    //         // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
-
-    //         lo++;
-    //         if (bool) {
-    //             temp++;
-    //             while (lo < hi) {
-    //                 squares[i][0] = lo++;
-    //                 squares[i++][1] = temp++;
-    //             }
-    //         } else {
-    //             temp--;
-    //             while (lo < hi) {
-    //                 squares[i][0] = lo++;
-    //                 squares[i++][1] = temp--;
-    //             } 
-    //         }
-    //     }
-    //     return squares;
-    // }
-
     public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
-        return canMove(newRow, newCol, classifyMove(newRow, newCol));
+        int[][] squares = Board.findPieces(row, col, classifyMove(newRow, newCol));
+        for (int[] square : squares) {
+            if (square[0] == newRow) {
+                if (square[1] == newCol) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean seesSquare(int[] coord) {
@@ -214,12 +165,20 @@ public abstract class Piece {
         Board.removePiece(piece);
         int[][] squares = Board.findPieces(row, col, movetype);
         int index = -1;
+        loop:
         for (int i = 0; i < squares.length; i++) {
+            if (squares[i][0] == row) {
+                if (squares[i][1] == col) {
+                    continue;
+                }
+            }
             int[][] path = Board.getPath(row, col, squares[i][0], squares[i][1], movetype);
-            if (path[i][0] == newRow) {
-                if (path[i][1] == newCol) {
-                    index = i;
-                    break;
+            for (int[] square: path) {
+                if (square[0] == newRow) {
+                    if (square[1] == newCol) {
+                        index = i;
+                        break loop;
+                    }
                 }
             }
         }
@@ -247,7 +206,7 @@ public abstract class Piece {
             // for (int i = 0; i < edges.length; i++) {
                 // System.out.println("[" + edges[i][0] + "," + edges[i][1] + "]");
             // }
-            int[][] squares;
+            // int[][] squares;
             for (int i = 0; i < edges.length; i++) {
                 int newRow = edges[i][0];
                 int newCol = edges[i][1];
@@ -385,15 +344,15 @@ public abstract class Piece {
                             // }
                         }
                         ArrayList<Piece> pieces = sees();
-                        if (pieces.size() == 0) {
+                        // if (pieces.size() == 0) {
                             // System.out.println("im empty :((");
-                        }
+                        // }
                         for (Piece piece : pieces) {
                             // System.out.println("" + this + " sees " + piece);
                             piece.seenBy.add(this);
                             if (piece.type == Type.king) {
-                                System.out.println("White King: (" + King.whiteKing[0] + ", " + King.whiteKing[1] + ")");
-                                System.out.println("Black King: (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
+                                // System.out.println("White King: (" + King.whiteKing[0] + ", " + King.whiteKing[1] + ")");
+                                // System.out.println("Black King: (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
                                 rp.message = ReturnPlay.Message.CHECK;
                             }
                         }
@@ -405,6 +364,10 @@ public abstract class Piece {
                             if (piece.seesSquare(row, col)) {
                                 // System.out.println("" + piece + " sees " + this);
                                 seenBy.add(piece);
+                                Piece blocked = piece.seeThrough(this);
+                                if (blocked != null) {
+                                    blocked.seenBy.remove(piece);
+                                }
                             }
                         }
                         if (player == Player.white) {

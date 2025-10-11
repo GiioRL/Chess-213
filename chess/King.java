@@ -5,8 +5,10 @@ import java.util.ArrayList;
 
 public class King extends Piece {
 
-    public static int[] whiteKing;
+    public static int[] whiteKing; // location of white king
+    public static boolean whiteCheck; // white is in check
     public static int[] blackKing;
+    public static boolean blackCheck;
 
     public King(Player player, int row, int col) {
         super(player, row, col);
@@ -16,8 +18,10 @@ public class King extends Piece {
         moveTypes.add(MoveType.diagonal);
         if (player == Piece.Player.white) {
             whiteKing = new int[]{row, col};
+            whiteCheck = false;
         } else {
             blackKing = new int[]{row, col};
+            blackCheck = false;
         }
     }
 

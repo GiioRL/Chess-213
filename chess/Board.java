@@ -78,7 +78,7 @@ public class Board {
         return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
-    public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { //wait this finds pieces not edges
+    public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { // this may return the square that the piece is on
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;
             int newCol = -1;
