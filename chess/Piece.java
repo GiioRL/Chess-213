@@ -68,28 +68,6 @@ public abstract class Piece {
     }
 
     public boolean selfCheck(int newRow, int newCol) { //returns false if move results in self Check // infinite loop in line e2 e4; d1 h5; g7 g6; f7 f6
-        // Board.removePiece(this);
-        // boolean bool = true;
-        // if (player == Player.white) {
-        //     for (Piece piece : seenBy) {
-        //         // System.out.println("using " + piece + "'s eyes");
-        //         if (piece.seesSquare(King.whiteKing)) {
-        //             bool = false;
-        //             break;
-        //         }
-        //     }
-        // } else {
-        //     for (Piece piece : seenBy) {
-        //         // System.out.println("using " + piece + "'s eyes");
-        //         // System.out.println("Black King is on (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
-        //         if (piece.seesSquare(King.blackKing)) {
-        //             bool = false;
-        //             break;
-        //         }
-        //     }
-        // }
-        // Board.placePiece(this);
-        // return bool;
         for (Piece piece : seenBy) {
             Piece target = piece.seeThrough(this);
             if (target != null) {
@@ -332,72 +310,102 @@ public abstract class Piece {
         return;
     }
 
+    public boolean blockCheck(int newRow, int newCol) {
+        if (King.whiteCheck || King.blackCheck) { // one of the kings are in check
+            if (type == Type.king) {
+                return true;
+            }
+            Piece king;
+            if (player == Player.white) {
+                king = Board.getPiece(King.whiteKing);
+            } else {
+                king = Board.getPiece(King.blackKing);
+            }
+            if (king.seenBy.size() > 1) { //double checks cannot be blocked
+                return false;
+            }
+            Piece attacker = Board.getPiece(newRow, newCol); 
+            if (attacker != null) {
+                if (attacker.seesSquare(king.row, king.col)) { //attacker is captured
+                    return true;
+                }
+            }
+            Piece dummy = new Dummy(type, player, newRow, newCol);
+            Piece dummier = new Dummy(Type.queen, player, newRow, newCol);
+            ArrayList<Piece> pieces = dummier.sees();
+            for (Piece piece: pieces) {
+                Piece target = piece.seeThrough(dummy);
+                if (target != null && target.type == Type.king) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
+
     public int move(int newRow, int newCol, ReturnPlay rp) {
         // if (player == Board.player) { // MUST TURN THIS BACK ON
             MoveType movetype = classifyMove(newRow, newCol);
             // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
                 // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
                     if (canMove(newRow, newCol, movetype)) {
-                        // ReturnPiece rP = Board.makeReturnPiece(this);
-                        if (Board.hasPiece[newRow][newCol]) { // capture
-                            // System.out.println("munch munch munch");
-                            // Board.removePiece(row, col);
-                            Board.removePiece(this);
-                            Board.removePiece(newRow, newCol);
-                            row = newRow;
-                            col = newCol;
-                            Board.placePiece(this);
-                        } else { // just move it
-                            // if (Board.returnPieces.remove(rP)) {
-                                // System.out.println("PIECE FOUND!!");
-                                // Board.removePiece(row, col);
+                        // if (type == Type.king || (type != Type.king && blockCheck(newRow, newCol))) {
+                        if (blockCheck(newRow, newCol)) {
+                            ArrayList<Piece> pieces = sees();
+                            for (Piece piece: pieces) {
+                                piece.seenBy.remove(this);
+                            }
+                            if (Board.hasPiece[newRow][newCol]) { // capture
+                                Board.removePiece(this);
+                                pieces = sees();
+                                for (Piece piece: pieces) {
+                                    piece.seenBy.remove(this);
+                                }
+                                Board.removePiece(newRow, newCol);
+                                row = newRow;
+                                col = newCol;
+                                Board.placePiece(this);
+                            } else { // just move it
                                 Board.removePiece(this);
                                 row = newRow;
                                 col = newCol;
                                 Board.placePiece(this);
-                            // } else {
-                                // System.out.println("I wasn't found??");
-                            // }
-                        }
-                        ArrayList<Piece> pieces = sees();
-                        // if (pieces.size() == 0) {
-                            // System.out.println("im empty :((");
-                        // }
-                        for (Piece piece : pieces) {
-                            // System.out.println("" + this + " sees " + piece);
-                            piece.seenBy.add(this);
-                            if (piece.type == Type.king) {
-                                check(rp);
-                                // System.out.println("White King: (" + King.whiteKing[0] + ", " + King.whiteKing[1] + ")");
-                                // System.out.println("Black King: (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
-                                // rp.message = ReturnPlay.Message.CHECK;
-                                // if (player == Player.white) {
-                                //     King.blackCheck = true;
-                                // } else {
-                                //     King.whiteCheck = true;
-                                // }
                             }
-                        }
-                        seenBy.clear();
-                        Piece dummy = new Queen(player, row, col);
-                        pieces = dummy.sees();
-                        for (Piece piece : pieces) {
-                            // System.out.println("using " + piece + "'s eyes");
-                            if (piece.seesSquare(row, col)) {
-                                // System.out.println("" + piece + " sees " + this);
-                                seenBy.add(piece);
-                                Piece blocked = piece.seeThrough(this);
-                                if (blocked != null) {
-                                    blocked.seenBy.remove(piece);
+                            pieces = sees();
+                            for (Piece piece : pieces) {
+                                piece.seenBy.add(this);
+                                if (piece.type == Type.king) {
+                                    check(rp);
                                 }
                             }
-                        }
-                        if (player == Player.white) {
-                            Board.player = Player.black;
-                        } else {
-                            Board.player = Player.white;
-                        }
-                        return 1; // move was legal, and made
+                            seenBy.clear();
+                            // Piece dummy = new Queen(player, row, col);
+                            Piece dummy = new Dummy(Type.queen, player, row, col);
+                            pieces = dummy.sees();
+                            for (Piece piece : pieces) {
+                                if (piece.seesSquare(row, col)) {
+                                    seenBy.add(piece);
+                                    Piece blocked = piece.seeThrough(this);
+                                    if (blocked != null) {
+                                        blocked.seenBy.remove(piece);
+                                        if (blocked.type == Type.king) {
+                                            if (player == Player.white) { //player is the same color as blocked
+                                                King.whiteCheck = false;
+                                            } else {
+                                                King.blackCheck = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            if (player == Player.white) {
+                                Board.player = Player.black;
+                            } else {
+                                Board.player = Player.white;
+                            }
+                            return 1; // move was legal, and made
+                        }                    
                     // } else {
                     //     return -1; // move is legal for this piece (may be deleted) ??
                     }

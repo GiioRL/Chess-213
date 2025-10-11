@@ -13,6 +13,9 @@ public class Board {
     static Piece.Player player;
 
     public static void placePiece(Piece piece) { // should we populate white on row 1 and 2, black on 7 and 8 or the other way around becuase how a chess board visually works
+        if (piece.type == null) { //dummy
+            return;
+        }
         hasPiece[piece.row][piece.col] = true;
         board[piece.row][piece.col] = piece;
         returnPieces.add(makeReturnPiece(piece));
@@ -48,6 +51,9 @@ public class Board {
     }
 
     public static int removePiece(Piece piece) { // is this concerning
+        if (piece.type == null) { //dummy
+            return 0;
+        }
         int row = piece.row;
         int col = piece.col;
         if (removePiece(row, col) != null) {
