@@ -11,6 +11,10 @@ public class Knight extends Piece {
         moveTypes.add(MoveType.knight);
     }
 
+    public Piece seeThrough(Piece piece) {
+        return null;
+    }
+
     public ArrayList<Piece> sees() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
         for (int i = -1; i <= 1; i++) {

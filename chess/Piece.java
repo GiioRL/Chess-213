@@ -92,14 +92,16 @@ public abstract class Piece {
         // return bool;
         for (Piece piece : seenBy) {
             Piece target = piece.seeThrough(this);
-            if (target.type == Type.king) {
-                if (target.player == player) { // check if piece is EATING this guy >:D
-                    if (piece.row == newRow) {
-                        if (piece.col == newCol) {
-                            continue;
+            if (target != null) {
+                if (target.type == Type.king) {
+                    if (target.player == player) { // check if piece is EATING this guy >:D
+                        if (piece.row == newRow) {
+                            if (piece.col == newCol) {
+                                continue;
+                            }
                         }
+                        return false;
                     }
-                    return false;
                 }
             }
         }
@@ -316,6 +318,20 @@ public abstract class Piece {
     //     return pieces;
     // }
 
+    public void check(ReturnPlay rp) {
+        rp.message = ReturnPlay.Message.CHECK;
+        if (player == Player.white) {
+            King.blackCheck = true;
+        } else {
+            King.whiteCheck = true;
+        }
+        checkMate(rp);
+    }
+
+    public void checkMate(ReturnPlay rp) { // check for checkmate, update rp message if necessary
+        return;
+    }
+
     public int move(int newRow, int newCol, ReturnPlay rp) {
         // if (player == Board.player) { // MUST TURN THIS BACK ON
             MoveType movetype = classifyMove(newRow, newCol);
@@ -351,9 +367,15 @@ public abstract class Piece {
                             // System.out.println("" + this + " sees " + piece);
                             piece.seenBy.add(this);
                             if (piece.type == Type.king) {
+                                check(rp);
                                 // System.out.println("White King: (" + King.whiteKing[0] + ", " + King.whiteKing[1] + ")");
                                 // System.out.println("Black King: (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
-                                rp.message = ReturnPlay.Message.CHECK;
+                                // rp.message = ReturnPlay.Message.CHECK;
+                                // if (player == Player.white) {
+                                //     King.blackCheck = true;
+                                // } else {
+                                //     King.whiteCheck = true;
+                                // }
                             }
                         }
                         seenBy.clear();

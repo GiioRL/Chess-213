@@ -61,6 +61,10 @@ public class Pawn extends Piece {
         }
     }
 
+    public Piece seeThrough(Piece piece) {
+        return null;
+    }
+
     public ArrayList<Piece> sees() {
         int newRow = row; // placeholder
         ArrayList<Piece> pieces = new ArrayList<Piece>();
@@ -74,11 +78,68 @@ public class Pawn extends Piece {
         return pieces;
     }
 
+    public void promotion(String type, ReturnPlay rp) {
+        Piece newPiece = null;
+        switch(type) {
+            case "R":
+            newPiece = new Rook(player, row, col);
+            break;
+            case "N":
+            newPiece = new Knight(player, row, col);
+            break;
+            case "B":
+            newPiece = new Bishop(player, row, col);
+            break;
+            case "Q":
+            newPiece = new Queen(player, row, col);
+            break;
+            default:
+            return;
+        }
+        Board.removePiece(this);
+        newPiece.seenBy = seenBy;
+        Board.placePiece(newPiece); // check for check with new piece
+        ArrayList<Piece> pieces = newPiece.sees();
+        for (Piece piece: pieces) {
+            piece.seenBy.add(newPiece);
+            if (piece.type == Type.king) {
+                newPiece.check(rp);
+                // rp.message = ReturnPlay.Message.CHECK;
+                // if (player == Player.white) {
+                //     King.blackCheck = true;
+                // } else {
+                //     King.whiteCheck = true;
+                // }
+            }
+        }
+    }
+
     public int move(int newRow, int newCol, ReturnPlay rp) {
         int num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
         }
+        if (player == Player.white) {
+            if (newRow == 0) {
+                promotion("Q", rp);
+            }
+        } else {
+            if (newRow == 7) {
+                promotion("Q", rp);
+            }
+        }
         return num;
+    }
+
+    public int move(int newRow, int newCol, String newType, ReturnPlay rp) {
+        if (canMove(newRow, newCol, classifyMove(newRow, newCol))) {
+            if (newType.equals("R") || newType.equals("N") || newType.equals("B") || newType.equals("Q")) {
+                if (super.move(newRow, newCol, rp) == 1) {
+                    promotion(newType, rp);
+                    return 1;
+                }
+            }
+        }
+        return -1;
     }
 }

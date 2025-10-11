@@ -34,6 +34,10 @@ public class King extends Piece {
         return false;
     }
 
+    public Piece seeThrough(Piece piece) {
+        return null;
+    }
+
     public ArrayList<Piece> sees() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
         for (int i = -1; i <= 1; i++) {
