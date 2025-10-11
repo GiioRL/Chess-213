@@ -78,7 +78,7 @@ public class Board {
         return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
-    public static int[][] findEdges(int row, int col, Piece.MoveType movetype) {
+    public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { //wait this finds pieces not edges
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;
             int newCol = -1;
@@ -191,7 +191,7 @@ public class Board {
             tempCol = col;
 
             if (bool) {
-                while (row != newRow) {
+                while (tempRow != newRow) {
                     squares[i][0] = tempRow++;
                     squares[i++][1] = tempCol;
                 }
@@ -242,22 +242,7 @@ public class Board {
                 bool2 = false;
                 tempCol = col - 1;
             }
-            // System.out.println("lo: " + lo + "\nhi: " + hi + "\nbool: " + bool);
-
-            // lo++;
-            // if (bool) {
-            //     temp++;
-            //     while (lo < hi) {
-            //         squares[i][0] = lo++;
-            //         squares[i++][1] = temp++;
-            //     }
-            // } else {
-            //     temp--;
-            //     while (lo < hi) {
-            //         squares[i][0] = lo++;
-            //         squares[i++][1] = temp--;
-            //     } 
-            // }
+          
             if (bool) {
                 if (bool2) {
                     while (tempRow != newRow) {
@@ -324,23 +309,4 @@ public class Board {
         returnPieces.clear();
         player = Piece.Player.white;
     }
-
-    // public static void printBoard() {
-    //     for (int r = 0; r < 8; r++) {
-    //         for (int c = 0; c < 8; c++) {
-    //             if (hasPiece[r][c]) {
-    //                 System.out.print("CP");
-    //             } else {
-    //                 if ((r + c) % 2 == 0) {
-    //                 System.out.print("  ");
-    //                 } else {
-    //                     System.out.print("##");
-    //                 }
-    //             }
-    //             System.out.print(" ");
-    //         }
-    //         System.out.println((8 - r));
-    //     }
-    //     System.out.println(" a  b  c  d  e  f  g  h");
-    // }
 }

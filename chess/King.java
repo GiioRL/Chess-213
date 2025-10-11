@@ -5,12 +5,20 @@ import java.util.ArrayList;
 
 public class King extends Piece {
 
+    public static int[] whiteKing;
+    public static int[] blackKing;
+
     public King(Player player, int row, int col) {
         super(player, row, col);
         type = Type.king;
         moveTypes.add(MoveType.vertical);
         moveTypes.add(MoveType.horizontal);
         moveTypes.add(MoveType.diagonal);
+        if (player == Piece.Player.white) {
+            whiteKing = new int[]{row, col};
+        } else {
+            blackKing = new int[]{row, col};
+        }
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
@@ -32,5 +40,19 @@ public class King extends Piece {
             }
         }
         return pieces;
+    }
+
+    public int move(int newRow, int newCol, ReturnPlay rp) {
+        if (super.move(newRow, newCol, rp) == 1) { //if seenBy is not empty undo that move or something
+            if (player == Piece.Player.white) {
+                whiteKing[0] = newRow;
+                whiteKing[1] = newCol;
+            } else {
+                blackKing[0] = newRow;
+                blackKing[1] = newCol;
+            }
+            return 1;
+        }
+        return -1;
     }
 }

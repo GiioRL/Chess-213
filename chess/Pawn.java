@@ -15,34 +15,37 @@ public class Pawn extends Piece {
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (cannibalCheck(newRow, newCol)) {
-            if (movetype == MoveType.vertical) {
-                if (!Board.hasPiece[newRow][newCol]) {
-                    if (player == Player.white) {
-                        System.out.println("player is white");
-                        if (!Board.hasPiece[row-1][newCol]) {
-                            System.out.println("clear up ahead");
-                            return ((row > newRow) && (row - newRow) <= range);
+            if (selfCheck()) {
+                if (movetype == MoveType.vertical) {
+                    if (!Board.hasPiece[newRow][newCol]) {
+                        if (player == Player.white) {
+                            // System.out.println("player is white");
+                            if (!Board.hasPiece[row-1][newCol]) {
+                                // System.out.println("clear up ahead");
+                                return ((row > newRow) && (row - newRow) <= range);
+                            }
+                        } else {
+                            // System.out.println("im black");
+                            if (!Board.hasPiece[row+1][newCol]) {
+                                return ((newRow > row) && (newRow - row) <= range);
+                            }
                         }
                     } else {
-                        if (!Board.hasPiece[row+1][newCol]) {
-                            return ((newRow > row) && (newRow - row) <= range);
+                        return false;
+                    }
+                } else if (movetype == MoveType.diagonal) {
+                    if (Board.hasPiece[newRow][newCol]) {
+                        if (player == Player.white) {
+                            return ((row > newRow) && (row - newRow) <= 1);
+                        } else {
+                            return ((newRow > row) && (newRow - row) <= 1);
                         }
+                    // } else { // can condense all return falses
+                        // return false;
                     }
-                } else {
-                    return false;
-                }
-            } else if (movetype == MoveType.diagonal) {
-                if (Board.hasPiece[newRow][newCol]) {
-                    if (player == Player.white) {
-                        return ((row > newRow) && (row - newRow) <= 1);
-                    } else {
-                        return ((newRow > row) && (newRow - row) <= 1);
-                    }
-                // } else { // can condense all return falses
+                // } else {
                     // return false;
                 }
-            // } else {
-                // return false;
             }
         // } else {
             // return false;

@@ -12,7 +12,7 @@ public abstract class Piece {
     Player player;
     int row; // 0 to 7 for rows 1 to 8
     int col; // 0 to 7 for columns a to h
-    String coord;
+    // String coord; // i dont think this is ever used
     // int range; // i dont think this is necessary
     ArrayList<MoveType> moveTypes;
     ArrayList<Piece> seenBy;
@@ -21,7 +21,7 @@ public abstract class Piece {
         this.player = player;
         this.row = row;
         this.col = col;
-        coord = Board.coordConverter(row, col);
+        // coord = Board.coordConverter(row, col);
         moveTypes = new ArrayList<MoveType>();
         seenBy = new ArrayList<Piece>();
     }
@@ -67,19 +67,46 @@ public abstract class Piece {
         }
     }
 
+    public boolean selfCheck() { //returns false if move results in selfCheck
+        Board.removePiece(this);
+        boolean bool = true;
+        if (player == Player.white) {
+            for (Piece piece : seenBy) {
+                // System.out.println("using " + piece + "'s eyes");
+                if (piece.seesSquare(King.whiteKing)) {
+                    bool = false;
+                    break;
+                }
+            }
+        } else {
+            for (Piece piece : seenBy) {
+                // System.out.println("using " + piece + "'s eyes");
+                // System.out.println("Black King is on (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
+                if (piece.seesSquare(King.blackKing)) {
+                    bool = false;
+                    break;
+                }
+            }
+        }
+        Board.placePiece(this);
+        return bool;
+    }
+
     public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
         if (moveTypes.contains(movetype)) {
             if (cannibalCheck(newRow, newCol)) {
-                boolean bool = true;
-                // System.out.println("getting the path");
-                int[][] squares = Board.getPath(row, col, newRow, newCol, movetype);
-                if (squares != null) {
-                    for (int i = 0; i < squares.length; i++) {
-                        // System.out.println("checking square " + squares[i][0] + squares[i][1]);
-                        bool &= !Board.hasPiece[squares[i][0]][squares[i][1]];
+                if (selfCheck()) {
+                    boolean bool = true;
+                    // System.out.println("getting the path");
+                    int[][] squares = Board.getPath(row, col, newRow, newCol, movetype);
+                    if (squares != null) {
+                        for (int i = 0; i < squares.length; i++) {
+                            // System.out.println("checking square " + squares[i][0] + squares[i][1]);
+                            bool &= !Board.hasPiece[squares[i][0]][squares[i][1]];
+                        }
                     }
+                    return bool;
                 }
-                return bool;
             }
         }
         return false;
@@ -160,6 +187,10 @@ public abstract class Piece {
         return canMove(newRow, newCol, classifyMove(newRow, newCol));
     }
 
+    public boolean seesSquare(int[] coord) {
+        return seesSquare(coord[0], coord[1]);
+    }
+
     public void seePiece(int newRow, int newCol, ArrayList<Piece> pieces) {
         Piece piece = null;
         if (Board.validSquare(newRow, newCol)) {
@@ -181,7 +212,7 @@ public abstract class Piece {
         int newCol = piece.col;
         MoveType movetype = classifyMove(newRow, newCol);
         Board.removePiece(piece);
-        int[][] squares = Board.findEdges(row, col, movetype);
+        int[][] squares = Board.findPieces(row, col, movetype);
         int index = -1;
         for (int i = 0; i < squares.length; i++) {
             int[][] path = Board.getPath(row, col, squares[i][0], squares[i][1], movetype);
@@ -192,32 +223,38 @@ public abstract class Piece {
                 }
             }
         }
-        int[][] path = Board.getPath(newRow, newCol, squares[index][0], squares[index][col], movetype);
-        Piece target = null;
-        for (int i = 0; i < path.length; i++) {
-            int tempRow = path[i][0];
-            int tempCol = path[i][1];
-            if (Board.hasPiece[tempRow][tempCol]) {
-                target = Board.getPiece(tempRow, tempCol);
-                break;
-            }
-        }
-        return target;
+        // int[][] path = Board.getPath(newRow, newCol, squares[index][0], squares[index][col], movetype);
+        // Piece target = null;
+        // for (int i = 0; i < path.length; i++) {
+        //     int tempRow = path[i][0];
+        //     int tempCol = path[i][1];
+        //     if (Board.hasPiece[tempRow][tempCol]) {
+        //         target = Board.getPiece(tempRow, tempCol);
+        //         break;
+        //     }
+        // }
+        Board.placePiece(piece);
+        return Board.getPiece(squares[index]);
     }
 
-    public ArrayList<Piece> sees() {
+    public ArrayList<Piece> sees() { // pretty sure this works
         ArrayList<Piece> pieces = new ArrayList<Piece>();
 
         for (MoveType movetype : moveTypes) {
-            int[][] edges = Board.findEdges(row, col, movetype);
+            // System.out.println("MoveType: " + movetype);
+            int[][] edges = Board.findPieces(row, col, movetype);
+            // System.out.println("Edges:");
+            // for (int i = 0; i < edges.length; i++) {
+                // System.out.println("[" + edges[i][0] + "," + edges[i][1] + "]");
+            // }
             int[][] squares;
             for (int i = 0; i < edges.length; i++) {
                 int newRow = edges[i][0];
                 int newCol = edges[i][1];
-                squares = Board.getPath(row, col, newRow, newCol, movetype);
-                for (int[] square : squares) {
-                    seePiece(square, pieces);
+                if ((row == newRow) && (col == newCol)) {
+                    continue;
                 }
+                seePiece(newRow, newCol, pieces);
             }
         }
         return pieces;
@@ -329,15 +366,17 @@ public abstract class Piece {
                         ReturnPiece rP = Board.makeReturnPiece(this);
                         if (Board.hasPiece[newRow][newCol]) { // capture
                             // System.out.println("munch munch munch");
-                            Board.removePiece(row, col);
+                            // Board.removePiece(row, col);
+                            Board.removePiece(this);
+                            Board.removePiece(newRow, newCol);
                             row = newRow;
                             col = newCol;
-                            Board.removePiece(row, col);
                             Board.placePiece(this);
                         } else { // just move it
                             if (Board.returnPieces.remove(rP)) {
                                 // System.out.println("PIECE FOUND!!");
-                                Board.removePiece(row, col);
+                                // Board.removePiece(row, col);
+                                Board.removePiece(this);
                                 row = newRow;
                                 col = newCol;
                                 Board.placePiece(this);
@@ -346,10 +385,15 @@ public abstract class Piece {
                             }
                         }
                         ArrayList<Piece> pieces = sees();
+                        if (pieces.size() == 0) {
+                            // System.out.println("im empty :((");
+                        }
                         for (Piece piece : pieces) {
                             // System.out.println("" + this + " sees " + piece);
                             piece.seenBy.add(this);
                             if (piece.type == Type.king) {
+                                System.out.println("White King: (" + King.whiteKing[0] + ", " + King.whiteKing[1] + ")");
+                                System.out.println("Black King: (" + King.blackKing[0] + ", " + King.blackKing[1] + ")");
                                 rp.message = ReturnPlay.Message.CHECK;
                             }
                         }
@@ -372,6 +416,7 @@ public abstract class Piece {
                     // } else {
                     //     return -1; // move is legal for this piece (may be deleted) ??
                     }
+                    // System.out.println("cant move sir");
                 // } else { // piece is eating its own color
                 //     return -1;
                 // }
