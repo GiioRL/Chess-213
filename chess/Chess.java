@@ -20,9 +20,18 @@ public class Chess {
 		ReturnPlay rp = new ReturnPlay(); // maybe we instantiate it here
 		rp.piecesOnBoard = Board.returnPieces; // update if legal move is made wait this is an object it auto updates right
 
-		if (squares.length != 2) { // illegal input actually this is not true but for now it is
+		if (squares.length < 1 || squares.length > 3) // definitely illegal
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-		} else if (!Board.validSquare(squares[0]) || !Board.validSquare(squares[1])) { //fake square
+		if (squares.length == 1) // Resign is the only legal move with length 1
+		{
+			if (squares[0].equalsIgnoreCase("resign"))
+				rp.message = (Board.player == Piece.Player.white ? ReturnPlay.Message.RESIGN_BLACK_WINS : ReturnPlay.Message.RESIGN_WHITE_WINS);
+			else
+				rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+		}
+		else if (squares.length == 3 && !squares[2].equalsIgnoreCase("draw?")) // doesn't take into account pawn promotion which is also length 3
+			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
+		 else if (!Board.validSquare(squares[0]) || !Board.validSquare(squares[1])) { //fake square
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		} else if (Board.getPiece(squares[0]) == null) { // no piece exists on square
 			System.out.println("no piece there bro");
@@ -32,6 +41,8 @@ public class Chess {
 			if (piece.move(squares[1], rp) == -1) {
 				rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 			}
+			else if (squares.length == 3 && squares[2].equalsIgnoreCase("draw?"))
+				rp.message = ReturnPlay.Message.DRAW;
 		}
 
 		return rp;
