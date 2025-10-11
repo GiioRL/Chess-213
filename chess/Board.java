@@ -3,9 +3,14 @@ package chess;
 import java.util.ArrayList;
 
 public class Board {
-    static Piece[][] board = new Piece[8][8];
-    static boolean[][] hasPiece = new boolean[8][8];
+    // static Piece[][] board = new Piece[8][8];
+    // static boolean[][] hasPiece = new boolean[8][8];
+    // static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
+    // static Piece.Player player = Piece.Player.white;
+    static Piece[][] board;
+    static boolean[][] hasPiece;
     static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
+    static Piece.Player player;
 
     public static void placePiece(Piece piece) { // should we populate white on row 1 and 2, black on 7 and 8 or the other way around becuase how a chess board visually works
         hasPiece[piece.row][piece.col] = true;
@@ -57,7 +62,11 @@ public class Board {
             return false;
         }
         int[] coord = coordConverter(square);
-        return (coord[0] >= 0 && coord[0] <= 7 && coord[1] >= 0 && coord[1] <= 7);
+        return validSquare(coord[0], coord[1]);
+    }
+
+    public static boolean validSquare(int row, int col) {
+        return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
     public static ReturnPiece makeReturnPiece(Piece piece) {
@@ -89,6 +98,13 @@ public class Board {
 
     public static void printBoard() {
         PlayChess.printBoard(returnPieces);
+    }
+
+    public static void reset() {
+        board = new Piece[8][8];
+        hasPiece = new boolean[8][8];
+        returnPieces.clear();
+        player = Piece.Player.white;
     }
 
     // public static void printBoard() {
