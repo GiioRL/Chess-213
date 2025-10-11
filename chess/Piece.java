@@ -265,6 +265,13 @@ public abstract class Piece {
                     seePiece(newRow, newCol, pieces);
                 }
             }
+            else if (movetype == MoveType.knight)
+            {
+                int[] deltaRow = {2, 2, -2, -2, 1, -1, 1, -1};
+                int[] deltaCol = {1, -1, 1, -1, 2, 2, -2, -2};
+                for (int i = 0; i < deltaRow.length; i++)
+                    seePiece(row + deltaRow[i], col + deltaCol[i], pieces);
+            }
         }
         return pieces;
     }
