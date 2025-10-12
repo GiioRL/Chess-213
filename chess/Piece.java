@@ -223,14 +223,27 @@ public abstract class Piece {
                 }
             }
         }
-        for (Piece piece : seenBy) {
+        for (Piece piece : seenBy) { // white rook g8 thinks black king b8 sees it
             if (piece.canMove(row, col, piece.classifyMove(row, col))) {
                 return; // this piece can be captured
             }
         }
         int[][] path = Board.getPath(row, col, king.row, king.col, classifyMove(king.row, king.col));
-        for (Piece piece: Board.realPieces) {
-            if (piece.player == player) {
+        // for (Piece piece: Board.realPieces) {
+        //     if (piece.player != player) { //piece needs to be on the checked team's side
+        //         for (int[] square: path) {
+        //             int tempRow = square[0];
+        //             int tempCol = square[1];
+        //             if (piece.canMove(tempRow, tempCol, piece.classifyMove(tempRow, tempCol))) {
+        //                 return; // piece can block the check
+        //             }
+        //         }
+        //     }
+        // }
+
+        for (int i = 0; i < Board.realPieces.size(); i++) {
+            Piece piece = Board.realPieces.get(i);
+            if (piece.player != player) { //piece needs to be on the checked team's side
                 for (int[] square: path) {
                     int tempRow = square[0];
                     int tempCol = square[1];
@@ -240,6 +253,7 @@ public abstract class Piece {
                 }
             }
         }
+
         //no moves can be made, it is checkmate
         if (player == Player.white) {
             rp.message = ReturnPlay.Message.CHECKMATE_WHITE_WINS;
@@ -251,6 +265,8 @@ public abstract class Piece {
     public boolean blockCheck(int newRow, int newCol) {
         if (King.whiteCheck || King.blackCheck) { // one of the kings are in check
             if (type == Type.king) {
+                King.whiteCheck = false; // this might not be the best solution but it works for now i think
+                King.blackCheck = false;
                 return true;
             }
             Piece king;
@@ -265,6 +281,8 @@ public abstract class Piece {
             Piece attacker = Board.getPiece(newRow, newCol); 
             if (attacker != null) {
                 if (attacker.seesSquare(king.row, king.col)) { //attacker is captured
+                    King.whiteCheck = false;
+                    King.blackCheck = false;
                     return true;
                 }
             }
@@ -274,6 +292,8 @@ public abstract class Piece {
             for (Piece piece: pieces) {
                 Piece target = piece.seeThrough(dummy);
                 if (target != null && target.type == Type.king) {
+                    King.whiteCheck = false;
+                    King.blackCheck = false;
                     return true;
                 }
             }
@@ -289,7 +309,7 @@ public abstract class Piece {
                 // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
                     if (canMove(newRow, newCol, movetype)) {
                         // if (type == Type.king || (type != Type.king && blockCheck(newRow, newCol))) {
-                        if (blockCheck(newRow, newCol)) {
+                        if (blockCheck(newRow, newCol)) { // start making the move
                             ArrayList<Piece> pieces = sees();
                             for (Piece piece: pieces) {
                                 piece.seenBy.remove(this);
