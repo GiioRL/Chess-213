@@ -172,7 +172,9 @@ public abstract class Piece {
         //         break;
         //     }
         // }
-        Board.placePiece(piece);
+        if (piece.type != null) { // keep those dang dummies off the board
+            Board.placePiece(piece);
+        }
         return Board.getPiece(squares[index]);
     }
 

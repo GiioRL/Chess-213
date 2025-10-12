@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class King extends Piece {
 
-    public static int[] whiteKing; // location of white king
-    public static boolean whiteCheck; // white is in check
-    public static int[] blackKing;
-    public static boolean blackCheck;
+    public static int[] whiteKing = new int[]{0, 4}; // location of white king
+    public static boolean whiteCheck = false; // white is in check
+    public static int[] blackKing = new int[]{7, 4};
+    public static boolean blackCheck = false;
 
     public King(Player player, int row, int col) {
         super(player, row, col);
@@ -16,13 +16,13 @@ public class King extends Piece {
         moveTypes.add(MoveType.vertical);
         moveTypes.add(MoveType.horizontal);
         moveTypes.add(MoveType.diagonal);
-        if (player == Piece.Player.white) {
-            whiteKing = new int[]{row, col};
-            whiteCheck = false;
-        } else {
-            blackKing = new int[]{row, col};
-            blackCheck = false;
-        }
+        // if (player == Piece.Player.white) {
+        //     whiteKing = new int[]{row, col};
+        //     // whiteCheck = false;
+        // } else {
+        //     blackKing = new int[]{row, col};
+        //     // blackCheck = false;
+        // }
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
@@ -34,7 +34,7 @@ public class King extends Piece {
                 Piece dummier = new Dummy(Type.queen, player, newRow, newCol);
                 ArrayList<Piece> pieces = dummier.sees();
                 for (Piece piece : pieces) {
-                    if (piece.seesSquare(newRow, newCol)) {// queen f3 cant see king f6?
+                    if (piece.seesSquare(newRow, newCol)) {
                         Board.removePiece(dummy);
                         return false;
                     }

@@ -118,16 +118,17 @@ public class Pawn extends Piece {
         int num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
-        }
-        if (player == Player.white) {
-            if (newRow == 0) {
-                promotion("Q", rp);
+            if (player == Player.white) {
+                if (newRow == 0) {
+                    promotion("Q", rp);
+                }
+            } else {
+                if (newRow == 7) {
+                    promotion("Q", rp);
+                }
             }
-        } else {
-            if (newRow == 7) {
-                promotion("Q", rp);
-            }
         }
+        
         return num;
     }
 
