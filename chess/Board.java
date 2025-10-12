@@ -84,6 +84,27 @@ public class Board {
         return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
+    public static boolean squareUnderCheck(int row, int col, Piece.Player player) // player represents side that would be under check, not side that is giving check
+    {
+        // Use queen as dummy to find pieces attacking (newRow, newCol)
+        Piece dummy = new Dummy(Piece.Type.queen, player, row, col);
+        ArrayList<Piece> pieces = dummy.sees();
+        for (Piece piece : pieces) {
+            if (piece.seesSquare(row, col)) {
+                return true;
+            }
+        }
+        // Need to also use knight attacking (newRow, newCol)
+        dummy = new Dummy(Piece.Type.knight, player, row, col);
+        pieces = dummy.sees();
+        for (Piece piece : pieces) {
+            if (piece.seesSquare(row, col)) {
+                return true;
+            }       
+        }
+        return false;
+    }
+
     public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { // this may return the square that the piece is on
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;

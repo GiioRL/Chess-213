@@ -22,7 +22,7 @@ public class Chess {
 
 		if (squares.length < 1 || squares.length > 3) // definitely illegal
 			rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
-		if (squares.length == 1) // Resign is the only legal move with length 1
+		else if (squares.length == 1) // Resign is the only legal move with length 1
 		{
 			if (squares[0].equalsIgnoreCase("resign"))
 				rp.message = (Board.player == Piece.Player.white ? ReturnPlay.Message.RESIGN_BLACK_WINS : ReturnPlay.Message.RESIGN_WHITE_WINS);
