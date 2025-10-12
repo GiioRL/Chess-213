@@ -107,11 +107,16 @@ public abstract class Piece {
     }
 
     public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
-        int[][] squares = Board.findPieces(row, col, classifyMove(newRow, newCol));
-        for (int[] square : squares) {
-            if (square[0] == newRow) {
-                if (square[1] == newCol) {
-                    return true;
+        MoveType movetype = classifyMove(newRow, newCol);
+        if (moveTypes.contains(movetype)) {
+            int[][] squares = Board.findPieces(row, col, movetype);
+            if (squares != null) {
+                for (int[] square : squares) {
+                    if (square[0] == newRow) {
+                        if (square[1] == newCol) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -162,18 +167,11 @@ public abstract class Piece {
                 }
             }
         }
-        // int[][] path = Board.getPath(newRow, newCol, squares[index][0], squares[index][col], movetype);
-        // Piece target = null;
-        // for (int i = 0; i < path.length; i++) {
-        //     int tempRow = path[i][0];
-        //     int tempCol = path[i][1];
-        //     if (Board.hasPiece[tempRow][tempCol]) {
-        //         target = Board.getPiece(tempRow, tempCol);
-        //         break;
-        //     }
-        // }
         if (piece.type != null) { // keep those dang dummies off the board
             Board.placePiece(piece);
+        }
+        if (index == -1) {
+            return null; // piece on edge of the board (if not this is an issue)
         }
         return Board.getPiece(squares[index]);
     }
@@ -182,13 +180,7 @@ public abstract class Piece {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
 
         for (MoveType movetype : moveTypes) {
-            // System.out.println("MoveType: " + movetype);
             int[][] edges = Board.findPieces(row, col, movetype);
-            // System.out.println("Edges:");
-            // for (int i = 0; i < edges.length; i++) {
-                // System.out.println("[" + edges[i][0] + "," + edges[i][1] + "]");
-            // }
-            // int[][] squares;
             for (int i = 0; i < edges.length; i++) {
                 int newRow = edges[i][0];
                 int newCol = edges[i][1];
@@ -201,103 +193,6 @@ public abstract class Piece {
         return pieces;
     }
 
-    // public ArrayList<Piece> sees() { // this WORKS
-    //     ArrayList<Piece> pieces = new ArrayList<Piece>();
-
-    //     for (MoveType movetype : moveTypes) {
-    //         int newRow = -1;
-    //         int newCol = -1;
-    //         if (movetype == MoveType.vertical) {
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newRow > 0) {
-    //                 if (Board.hasPiece[--newRow][newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow >= 0) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //             newRow = row;
-    //             while (newRow < 7) {
-    //                 if (Board.hasPiece[++newRow][newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow <= 7) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //         } else if (movetype == MoveType.horizontal) {
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newCol > 0) {
-    //                 if (Board.hasPiece[newRow][--newCol]) {
-    //                     break;
-    //                 } //problem here newCol
-    //             }
-    //             if (newCol >= 0) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //             newCol = col;
-    //             while (newCol < 7) {
-    //                 if (Board.hasPiece[newRow][++newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newCol <= 7) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //         } else if (movetype == MoveType.diagonal) { // and check the other direction
-    //             int min = Math.min(row, col);
-    //             int max = Math.min(7-row, 7-col);
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newRow > row-min) {
-    //                 if (Board.hasPiece[--newRow][--newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow >= row-min) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newRow < row+max) {
-    //                 // System.out.println("newRow: " + newRow + "\nnewCol: " + newCol);
-    //                 if (Board.hasPiece[++newRow][++newCol]){
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow <= row+max) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //             min = Math.min(row, 7-col);
-    //             max = Math.min(7-row, col);
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newRow > row-min) {
-    //                 if (Board.hasPiece[--newRow][++newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow >= row-min) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //             newRow = row;
-    //             newCol = col;
-    //             while (newRow < row+max) {
-    //                 if (Board.hasPiece[++newRow][--newCol]) {
-    //                     break;
-    //                 }
-    //             }
-    //             if (newRow <= row+max) {
-    //                 seePiece(newRow, newCol, pieces);
-    //             }
-    //         }
-    //     }
-    //     return pieces;
-    // }
-
     public void check(ReturnPlay rp) {
         rp.message = ReturnPlay.Message.CHECK;
         if (player == Player.white) {
@@ -308,8 +203,49 @@ public abstract class Piece {
         checkMate(rp);
     }
 
-    public void checkMate(ReturnPlay rp) { // check for checkmate, update rp message if necessary
-        return;
+    public void checkMate(ReturnPlay rp) { // check for checkmate, update rp message if necessary, check and checkmate are run on the piece checking the king
+        Piece king;
+        // boolean bool = false; //represents whether a legal move can be made
+        if (player == Player.white) {
+            king = Board.getPiece(King.blackKing);
+        } else {
+            king = Board.getPiece(King.whiteKing);
+        }
+        
+        for (int i = -1; i <= 1; i++) {
+            int newRow = king.row+i;
+            for (int j = -1; j <= 1; j++) {
+                int newCol = king.col+j;
+                if (Board.validSquare(newRow, newCol)) {
+                    if (king.canMove(newRow, newCol, king.classifyMove(newRow, newCol))) {
+                        return; // king can move
+                    }
+                }
+            }
+        }
+        for (Piece piece : seenBy) {
+            if (piece.canMove(row, col, piece.classifyMove(row, col))) {
+                return; // this piece can be captured
+            }
+        }
+        int[][] path = Board.getPath(row, col, king.row, king.col, classifyMove(king.row, king.col));
+        for (Piece piece: Board.realPieces) {
+            if (piece.player == player) {
+                for (int[] square: path) {
+                    int tempRow = square[0];
+                    int tempCol = square[1];
+                    if (piece.canMove(tempRow, tempCol, piece.classifyMove(tempRow, tempCol))) {
+                        return; // piece can block the check
+                    }
+                }
+            }
+        }
+        //no moves can be made, it is checkmate
+        if (player == Player.white) {
+            rp.message = ReturnPlay.Message.CHECKMATE_WHITE_WINS;
+        } else {
+            rp.message = ReturnPlay.Message.CHECKMATE_BLACK_WINS;
+        }
     }
 
     public boolean blockCheck(int newRow, int newCol) {
@@ -374,15 +310,6 @@ public abstract class Piece {
                                 col = newCol;
                                 Board.placePiece(this);
                             }
-                            pieces = sees();
-                            for (Piece piece : pieces) {
-                                piece.seenBy.add(this);
-                                if (piece.type == Type.king) {
-                                    check(rp);
-                                }
-                            }
-                            seenBy.clear();
-                            // Piece dummy = new Queen(player, row, col);
                             Piece dummy = new Dummy(Type.queen, player, row, col);
                             pieces = dummy.sees();
                             for (Piece piece : pieces) {
@@ -401,6 +328,21 @@ public abstract class Piece {
                                     }
                                 }
                             }
+                            dummy = new Dummy(Type.knight, player, row, col);
+                            pieces = dummy.sees();
+                            for (Piece piece: pieces) {
+                                if (piece.type == Type.knight) {
+                                    seenBy.add(piece);
+                                }
+                            }
+                            pieces = sees();
+                            for (Piece piece : pieces) {
+                                piece.seenBy.add(this);
+                                if (piece.type == Type.king) {
+                                    check(rp);
+                                }
+                            }
+                            seenBy.clear();
                             if (player == Player.white) {
                                 Board.player = Player.black;
                             } else {

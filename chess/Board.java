@@ -9,6 +9,7 @@ public class Board {
     // static Piece.Player player = Piece.Player.white;
     static Piece[][] board;
     static boolean[][] hasPiece;
+    static ArrayList<Piece> realPieces = new ArrayList<Piece>();
     static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
     static Piece.Player player;
 
@@ -16,6 +17,7 @@ public class Board {
         if (piece.type != null) { //dummy check
             hasPiece[piece.row][piece.col] = true;
             board[piece.row][piece.col] = piece;
+            realPieces.add(piece);
             returnPieces.add(makeReturnPiece(piece));
         } else { // for dummies
             if (!hasPiece[piece.row][piece.col]) { // only place dummy if there is no piece there already, don't override / still questionable
@@ -51,6 +53,7 @@ public class Board {
         board[row][col] = null;
         hasPiece[row][col] = false;
         if (piece.type != null) { // dummy check
+            realPieces.remove(piece);
             returnPieces.remove(makeReturnPiece(piece));
         }
         return piece;
@@ -119,7 +122,7 @@ public class Board {
         return false;
     }
 
-    public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { // this may return the square that the piece is on
+    public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { // this may return the square that the piece is on // null if knight or illegal
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;
             int newCol = -1;
@@ -268,7 +271,6 @@ public class Board {
         } else if (movetype == Piece.MoveType.diagonal) {
             squares = new int[Math.abs(row - newRow) - 1][2];
             boolean bool2 = false;
-            int temp = -1;
             if (row < newRow) {
                 bool = true;
                 tempRow = row + 1;
@@ -347,6 +349,7 @@ public class Board {
     public static void reset() {
         board = new Piece[8][8];
         hasPiece = new boolean[8][8];
+        realPieces.clear();
         returnPieces.clear();
         player = Piece.Player.white;
     }
