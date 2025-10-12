@@ -115,7 +115,7 @@ public class Chess {
 			Board.placePiece(piece);
 			// returnPieces.add(makeReturnPiece(piece));
 		}
-		Board.printBoard();
+		Board.printBoard(); // turn this off when submitting
 		// PlayChess.printBoard(returnPieces);
 	}
 }

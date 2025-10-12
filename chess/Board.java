@@ -12,13 +12,17 @@ public class Board {
     static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
     static Piece.Player player;
 
-    public static void placePiece(Piece piece) { // should we populate white on row 1 and 2, black on 7 and 8 or the other way around becuase how a chess board visually works
-        hasPiece[piece.row][piece.col] = true;
-        board[piece.row][piece.col] = piece;
+    public static void placePiece(Piece piece) { 
         if (piece.type != null) { //dummy check
+            hasPiece[piece.row][piece.col] = true;
+            board[piece.row][piece.col] = piece;
             returnPieces.add(makeReturnPiece(piece));
-            return;
-        }        
+        } else { // for dummies
+            if (!hasPiece[piece.row][piece.col]) { // only place dummy if there is no piece there already, don't override / still questionable
+                hasPiece[piece.row][piece.col] = true;
+                board[piece.row][piece.col] = piece;
+            }
+        }
     }
 
     public static Piece getPiece(int row, int col) {
@@ -39,7 +43,7 @@ public class Board {
         return getPiece(coordConverter(square));
     }
 
-    public static Piece removePiece(int row, int col) { //return piece
+    public static Piece removePiece(int row, int col) { //CAREFUL WITH DUMMIES (they may be on the same square as a piece)
         if (!hasPiece[row][col]) {
             return null;
         }
@@ -52,11 +56,15 @@ public class Board {
         return piece;
     }
 
-    public static int removePiece(Piece piece) { // is this concerning
+    public static int removePiece(Piece piece) {
 
         int row = piece.row;
         int col = piece.col;
-        if (removePiece(row, col) != null) {
+        Piece removed = removePiece(row, col);
+        if (removed != null) {
+            if (piece.type == null && removed.type != null) {
+                Board.placePiece(removed); //put that guy back down
+            }
             return 1;
         }
         return 0;

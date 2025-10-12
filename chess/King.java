@@ -7,10 +7,10 @@ import chess.ReturnPiece.PieceFile;
 
 public class King extends Piece {
 
-    public static int[] whiteKing; // location of white king
-    public static boolean whiteCheck; // white is in check
-    public static int[] blackKing;
-    public static boolean blackCheck;
+    public static int[] whiteKing = new int[]{0, 4}; // location of white king
+    public static boolean whiteCheck = false; // white is in check
+    public static int[] blackKing = new int[]{7, 4};
+    public static boolean blackCheck = false;
     boolean hasMoved;
 
     public King(Player player, int row, int col) {
@@ -19,13 +19,6 @@ public class King extends Piece {
         moveTypes.add(MoveType.vertical);
         moveTypes.add(MoveType.horizontal);
         moveTypes.add(MoveType.diagonal);
-        if (player == Piece.Player.white) {
-            whiteKing = new int[]{row, col};
-            whiteCheck = false;
-        } else {
-            blackKing = new int[]{row, col};
-            blackCheck = false;
-        }
         hasMoved = false;
     }
 
