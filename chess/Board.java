@@ -71,7 +71,7 @@ public class Board {
     }
 
     public static String coordConverter(int row, int col) { // check this guy
-        return "" + (char)('a' + col) + (row + '0');
+        return "" + (char)('a' + col) + (char)((8 - row) + '0');
     }
 
     public static int[] coordConverter(String coord) {

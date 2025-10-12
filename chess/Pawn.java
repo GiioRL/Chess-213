@@ -147,9 +147,13 @@ public class Pawn extends Piece {
     {
         if (!canEnPassant(newRow, newCol, classifyMove(newRow, newCol)))
             return -1;
+        Piece opponentPawn = Board.getPiece(row, newCol);
         Dummy dummy = new Dummy(Type.pawn, (player == Player.white ? Player.black : Player.white), newRow, newCol);
         Board.placePiece(dummy);
-        return super.move(newRow, newCol, rp);
+        if (super.move(newRow, newCol, rp) == -1)
+            return -1;
+        Board.removePiece(opponentPawn);
+        return 1;
     }
 
     public int move(int newRow, int newCol, ReturnPlay rp) {
