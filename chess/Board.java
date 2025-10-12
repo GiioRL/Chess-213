@@ -96,20 +96,26 @@ public class Board {
     {
         // Use queen as dummy to find pieces attacking (newRow, newCol)
         Piece dummy = new Dummy(Piece.Type.queen, player, row, col);
+        placePiece(dummy);
         ArrayList<Piece> pieces = dummy.sees();
         for (Piece piece : pieces) {
             if (piece.seesSquare(row, col)) {
+                removePiece(dummy);
                 return true;
             }
         }
+        removePiece(dummy);
         // Need to also use knight attacking (newRow, newCol)
         dummy = new Dummy(Piece.Type.knight, player, row, col);
+        placePiece(dummy);
         pieces = dummy.sees();
         for (Piece piece : pieces) {
             if (piece.seesSquare(row, col)) {
+                removePiece(dummy);
                 return true;
             }       
         }
+        removePiece(dummy);
         return false;
     }
 

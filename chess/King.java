@@ -3,13 +3,11 @@ package chess;
 import java.lang.Math;
 import java.util.ArrayList;
 
-import chess.ReturnPiece.PieceFile;
-
 public class King extends Piece {
 
-    public static int[] whiteKing = new int[]{0, 4}; // location of white king
+    public static int[] whiteKing = new int[]{7, 4}; // location of white king
     public static boolean whiteCheck = false; // white is in check
-    public static int[] blackKing = new int[]{7, 4};
+    public static int[] blackKing = new int[]{0, 4};
     public static boolean blackCheck = false;
     boolean hasMoved;
 
