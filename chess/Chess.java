@@ -4,6 +4,7 @@ public class Chess {
 
         enum Player { white, black } // chat i have not been using this at all.. feel free to convert to this one
 		static Piece[] pieces = new Piece[32];
+		static String prevMove = "";
     
 	/**
 	 * Plays the next move for whichever player has the turn.
@@ -44,7 +45,8 @@ public class Chess {
 			else if (squares.length == 3 && squares[2].equalsIgnoreCase("draw?"))
 				rp.message = ReturnPlay.Message.DRAW;
 		}
-
+		if (rp.message != ReturnPlay.Message.ILLEGAL_MOVE)
+			prevMove = move;
 		return rp;
 	}
 	

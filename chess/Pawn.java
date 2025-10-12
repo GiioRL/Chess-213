@@ -14,6 +14,8 @@ public class Pawn extends Piece {
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
+        if (canEnPassant(newRow, newCol, movetype))
+            return true;
         if (cannibalCheck(newRow, newCol)) {
             if (selfCheck(newRow, newCol)) {
                 if (movetype == MoveType.vertical) {
@@ -51,6 +53,33 @@ public class Pawn extends Piece {
             // return false;
         }
         return false;
+    }
+
+    public boolean canEnPassant(int newRow, int newCol, MoveType moveType)
+    {
+        // some illegal criteria
+        if (moveType != MoveType.diagonal || Board.hasPiece[newRow][newCol] || Chess.prevMove.equals(""))
+            return false;
+        if (player == Player.white && !(row == 3 && newRow == 2))
+            return false;
+        if (player == Player.black && !(row == 4 && newRow == 5))
+            return false;
+        if (Math.abs(col - newCol) != 1)
+            return false;
+        if (!Board.hasPiece[row][newCol]) // check if there exists opponent pawn adjacent to self
+            return false;
+        Piece opponentPawn = Board.getPiece(row, newCol); // get opponent pawn adjacent to self
+        if (opponentPawn.player == player || opponentPawn.type != Type.pawn) // some more illegal criteria
+            return false;
+        // Check prevMove to see if opponnent pawn just moved
+        String[] prevMoveSquares = Chess.prevMove.split(" ");
+        if (!prevMoveSquares[1].equalsIgnoreCase(Board.coordConverter(opponentPawn.row, opponentPawn.col)))
+            return false;
+        if (opponentPawn.player == Player.white && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row + 2, opponentPawn.col)))
+            return false;
+        if (opponentPawn.player == Player.black && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row - 2, opponentPawn.col)))
+            return false;
+        return true;
     }
 
     public boolean seesSquare(int newRow, int newCol) {
@@ -114,8 +143,19 @@ public class Pawn extends Piece {
         }
     }
 
+    public int enPassant(int newRow, int newCol, ReturnPlay rp)
+    {
+        if (!canEnPassant(newRow, newCol, classifyMove(newRow, newCol)))
+            return -1;
+        Dummy dummy = new Dummy(Type.pawn, (player == Player.white ? Player.black : Player.white), newRow, newCol);
+        Board.placePiece(dummy);
+        return super.move(newRow, newCol, rp);
+    }
+
     public int move(int newRow, int newCol, ReturnPlay rp) {
-        int num = super.move(newRow, newCol, rp);
+        int num = enPassant(newRow, newCol, rp);
+        if (num == -1)
+            num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
             if (player == Player.white) {
