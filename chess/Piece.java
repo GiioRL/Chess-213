@@ -144,40 +144,7 @@ public abstract class Piece {
     public void seePiece(int[] coord, ArrayList<Piece> pieces) {
         seePiece(coord[0], coord[1], pieces);
     }
-
-    public Piece seeThrough(Piece piece) {
-        int newRow = piece.row;
-        int newCol = piece.col;
-        MoveType movetype = classifyMove(newRow, newCol);
-        Board.removePiece(piece);
-        int[][] squares = Board.findPieces(row, col, movetype);
-        int index = -1;
-        loop:
-        for (int i = 0; i < squares.length; i++) {
-            if (squares[i][0] == row) {
-                if (squares[i][1] == col) {
-                    continue;
-                }
-            }
-            int[][] path = Board.getPath(row, col, squares[i][0], squares[i][1], movetype);
-            for (int[] square: path) {
-                if (square[0] == newRow) {
-                    if (square[1] == newCol) {
-                        index = i;
-                        break loop;
-                    }
-                }
-            }
-        }
-        if (piece.type != null) { // keep those dang dummies off the board
-            Board.placePiece(piece);
-        }
-        if (index == -1) {
-            return null; // piece on edge of the board (if not this is an issue)
-        }
-        return Board.getPiece(squares[index]);
-    }
-
+    
     public ArrayList<Piece> sees() { // pretty sure this works
         ArrayList<Piece> pieces = new ArrayList<Piece>();
 

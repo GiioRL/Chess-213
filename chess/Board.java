@@ -141,7 +141,7 @@ public class Board {
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;
             int newCol = -1;
-            int[][] squares = null;
+            int[][] squares = new int[0][2];
             if (movetype == Piece.MoveType.vertical) {
                 squares = new int[2][2];
                 newRow = row;

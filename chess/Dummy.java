@@ -39,10 +39,6 @@ public class Dummy extends Piece {
         return mimic.seesSquare(newRow, newCol);
     }
 
-    public Piece seeThrough(Piece piece) {
-        return mimic.seeThrough(piece);
-    }
-
     public ArrayList<Piece> sees() {
         return mimic.sees();
     }
