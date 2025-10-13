@@ -63,6 +63,13 @@ public class King extends Piece {
         return null;
     }
 
+    public boolean seesSquare(int newRow, int newCol) {
+        if (row == newRow && col == newCol) {
+            return false;
+        }
+        return ((Math.abs(row - newRow) <= 1) && (Math.abs(col - newCol) <= 1));
+    }
+
     public ArrayList<Piece> sees() {
         ArrayList<Piece> pieces = new ArrayList<Piece>();
         for (int i = -1; i <= 1; i++) {
