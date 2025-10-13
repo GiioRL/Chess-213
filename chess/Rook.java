@@ -4,7 +4,7 @@ public class Rook extends Piece {
     
     boolean hasMoved;
 
-    public Rook(Player player, int row, int col) {
+    public Rook(Chess.Player player, int row, int col) {
         super(player, row, col);
         type = Type.rook;
         moveTypes.add(MoveType.vertical);

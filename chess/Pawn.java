@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Pawn extends Piece {
     int range;
     
-    public Pawn(Player player, int row, int col) {
+    public Pawn(Chess.Player player, int row, int col) {
         super(player, row, col);
         type = Type.pawn;
         range = 2; // updated after first move
@@ -20,7 +20,7 @@ public class Pawn extends Piece {
             if (selfCheck(newRow, newCol)) {
                 if (movetype == MoveType.vertical) {
                     if (!Board.hasPiece[newRow][newCol]) {
-                        if (player == Player.white) {
+                        if (player == Chess.Player.white) {
                             // System.out.println("player is white");
                             if (!Board.hasPiece[row-1][newCol]) {
                                 // System.out.println("clear up ahead");
@@ -37,20 +37,14 @@ public class Pawn extends Piece {
                     }
                 } else if (movetype == MoveType.diagonal) {
                     if (Board.hasPiece[newRow][newCol]) {
-                        if (player == Player.white) {
+                        if (player == Chess.Player.white) {
                             return ((row > newRow) && (row - newRow) <= 1);
                         } else {
                             return ((newRow > row) && (newRow - row) <= 1);
                         }
-                    // } else { // can condense all return falses
-                        // return false;
                     }
-                // } else {
-                    // return false;
                 }
             }
-        // } else {
-            // return false;
         }
         return false;
     }
@@ -60,9 +54,9 @@ public class Pawn extends Piece {
         // some illegal criteria
         if (moveType != MoveType.diagonal || Board.hasPiece[newRow][newCol] || Chess.prevMove.equals(""))
             return false;
-        if (player == Player.white && !(row == 3 && newRow == 2))
+        if (player == Chess.Player.white && !(row == 3 && newRow == 2))
             return false;
-        if (player == Player.black && !(row == 4 && newRow == 5))
+        if (player == Chess.Player.black && !(row == 4 && newRow == 5))
             return false;
         if (Math.abs(col - newCol) != 1)
             return false;
@@ -75,15 +69,15 @@ public class Pawn extends Piece {
         String[] prevMoveSquares = Chess.prevMove.split(" ");
         if (!prevMoveSquares[1].equalsIgnoreCase(Board.coordConverter(opponentPawn.row, opponentPawn.col)))
             return false;
-        if (opponentPawn.player == Player.white && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row + 2, opponentPawn.col)))
+        if (opponentPawn.player == Chess.Player.white && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row + 2, opponentPawn.col)))
             return false;
-        if (opponentPawn.player == Player.black && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row - 2, opponentPawn.col)))
+        if (opponentPawn.player == Chess.Player.black && !prevMoveSquares[0].equalsIgnoreCase(Board.coordConverter(opponentPawn.row - 2, opponentPawn.col)))
             return false;
         return true;
     }
 
     public boolean seesSquare(int newRow, int newCol) {
-        if (player == Player.white) {
+        if (player == Chess.Player.white) {
             return ((row - newRow == 1) && (Math.abs(col - newCol) == 1));
         } else {
             return ((newRow - row == 1) && (Math.abs(newCol - col) == 1));
@@ -97,7 +91,7 @@ public class Pawn extends Piece {
     public ArrayList<Piece> sees() {
         int newRow = row; // placeholder
         ArrayList<Piece> pieces = new ArrayList<Piece>();
-        if (player == Player.white) {
+        if (player == Chess.Player.white) {
             newRow = row - 1;
         } else {
             newRow = row + 1;
@@ -133,12 +127,6 @@ public class Pawn extends Piece {
             piece.seenBy.add(newPiece);
             if (piece.type == Type.king) {
                 newPiece.check(rp);
-                // rp.message = ReturnPlay.Message.CHECK;
-                // if (player == Player.white) {
-                //     King.blackCheck = true;
-                // } else {
-                //     King.whiteCheck = true;
-                // }
             }
         }
     }
@@ -148,7 +136,7 @@ public class Pawn extends Piece {
         if (!canEnPassant(newRow, newCol, classifyMove(newRow, newCol)))
             return -1;
         Piece opponentPawn = Board.getPiece(row, newCol);
-        Dummy dummy = new Dummy(Type.pawn, (player == Player.white ? Player.black : Player.white), newRow, newCol);
+        Dummy dummy = new Dummy(Type.pawn, (player == Chess.Player.white ? Chess.Player.black : Chess.Player.white), newRow, newCol);
         Board.placePiece(dummy);
         if (super.move(newRow, newCol, rp) == -1)
             return -1;
@@ -162,7 +150,7 @@ public class Pawn extends Piece {
             num = super.move(newRow, newCol, rp);
         if (num == 1) {
             range = 1;
-            if (player == Player.white) {
+            if (player == Chess.Player.white) {
                 if (newRow == 0) {
                     promotion("Q", rp);
                 }

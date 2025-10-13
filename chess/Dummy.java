@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Dummy extends Piece {
     Piece mimic;
-    Dummy (Type type, Player player, int row, int col) {
+    Dummy (Type type, Chess.Player player, int row, int col) {
         super(player, row, col);
         switch(type) {
             case Type.pawn:

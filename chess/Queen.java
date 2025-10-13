@@ -2,7 +2,7 @@ package chess;
 
 public class Queen extends Piece {
     
-    public Queen(Player player, int row, int col) {
+    public Queen(Chess.Player player, int row, int col) {
         super(player, row, col);
         type = Type.queen;
         moveTypes.add(MoveType.vertical);

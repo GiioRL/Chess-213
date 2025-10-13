@@ -11,7 +11,7 @@ public class King extends Piece {
     public static boolean blackCheck = false;
     boolean hasMoved;
 
-    public King(Player player, int row, int col) {
+    public King(Chess.Player player, int row, int col) {
         super(player, row, col);
         type = Type.king;
         moveTypes.add(MoveType.vertical);
@@ -35,7 +35,7 @@ public class King extends Piece {
     {
         if (moveType != MoveType.horizontal || Math.abs(newCol - col) != 2 || Math.abs(newRow - row) != 0 || hasMoved) // some illegal criteria
             return false;
-        if ((player == Piece.Player.white && whiteCheck) || (player == Piece.Player.black && blackCheck)) // check if king under check
+        if ((player == Chess.Player.white && whiteCheck) || (player == Chess.Player.black && blackCheck)) // check if king under check
             return false;
         if (Board.squareUnderCheck(newRow, newCol, player) || Board.hasPiece[newRow][newCol]) // cannot move into check or capture a piece
             return false;
@@ -78,7 +78,7 @@ public class King extends Piece {
     public int move(int newRow, int newCol, ReturnPlay rp) {
         // castle if requested, otherwise regular move
         if (castle(newRow, newCol, rp) == 1 || super.move(newRow, newCol, rp) == 1) { //if seenBy is not empty undo that move or something
-            if (player == Piece.Player.white) {
+            if (player == Chess.Player.white) {
                 whiteKing[0] = newRow;
                 whiteKing[1] = newCol;
             } else {

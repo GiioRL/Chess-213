@@ -3,15 +3,11 @@ package chess;
 import java.util.ArrayList;
 
 public class Board {
-    // static Piece[][] board = new Piece[8][8];
-    // static boolean[][] hasPiece = new boolean[8][8];
-    // static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
-    // static Piece.Player player = Piece.Player.white;
     static Piece[][] board;
     static boolean[][] hasPiece;
     static ArrayList<Piece> realPieces = new ArrayList<Piece>();
     static ArrayList<ReturnPiece> returnPieces = new ArrayList<ReturnPiece>();
-    static Piece.Player player;
+    static Chess.Player player;
 
     public static void placePiece(Piece piece) { 
         if (piece.type != null) { //dummy check
@@ -34,12 +30,6 @@ public class Board {
     public static Piece getPiece (int[] coord) {
         return board[coord[0]][coord[1]];
     }
-
-    // public static Piece getPiece(String square) {
-    //     int col = square.charAt(0) - 'a';
-    //     int row = 8 - (square.charAt(1) - '0'); // replace with coord converter
-    //     return getPiece(row, col);
-    // }
 
     public static Piece getPiece(String square) {
         return getPiece(coordConverter(square));
@@ -79,7 +69,6 @@ public class Board {
 
     public static int[] coordConverter(String coord) {
         int[] newCoord = new int[] {8 - (coord.charAt(1) - '0'), (coord.charAt(0) - 'a')};
-        // System.out.println("coord converting " + coord + " to " + newCoord[0] + newCoord[1]);
         return newCoord;
     }
 
@@ -95,7 +84,7 @@ public class Board {
         return (row >= 0 && row <= 7 && col >= 0 && col <= 7);
     }
 
-    public static boolean squareUnderCheck(int row, int col, Piece.Player player) // player represents side that would be under check, not side that is giving check
+    public static boolean squareUnderCheck(int row, int col, Chess.Player player) // player represents side that would be under check, not side that is giving check
     {
         // Use queen as dummy to find pieces attacking (newRow, newCol)
         Piece dummy = new Dummy(Piece.Type.queen, player, row, col);
@@ -214,10 +203,7 @@ public class Board {
     }
 
     public static int[][] getPath(int row, int col, int newRow, int newCol, Piece.MoveType movetype) { // return IN ORDER the squares in between this piece's square and target square
-        // System.out.println("row: " + row + "\ncol: " + col + "\nnewRow: " + newRow + "\nnewCol: " + newCol);
         int[][] squares = null;
-        // int lo = -1; // kill
-        // int hi = -1; //kill
         int i = 0;
         boolean bool = false;
         int tempRow = -1;
@@ -231,7 +217,6 @@ public class Board {
                 bool = false;
                 tempRow = row - 1;
             }
-            // System.out.println("lo: " + lo + "hi: " + hi);
             tempCol = col;
 
             if (bool) {
@@ -255,7 +240,6 @@ public class Board {
                 bool = false;
                 tempCol = col - 1;
             }
-            // System.out.println("lo: " + lo + "hi: " + hi);
             tempRow = row;
             if (bool) {
                 while (tempCol != newCol) {
@@ -319,22 +303,22 @@ public class Board {
 		ReturnPiece rp = new ReturnPiece();
 		switch (piece.type) {
 			case pawn:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WP : ReturnPiece.PieceType.BP;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WP : ReturnPiece.PieceType.BP;
 				break;
 			case rook:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WR : ReturnPiece.PieceType.BR;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WR : ReturnPiece.PieceType.BR;
 				break;
 			case knight:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WN : ReturnPiece.PieceType.BN;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WN : ReturnPiece.PieceType.BN;
 				break;
 			case bishop:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WB : ReturnPiece.PieceType.BB;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WB : ReturnPiece.PieceType.BB;
 				break;
 			case queen:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WQ : ReturnPiece.PieceType.BQ;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WQ : ReturnPiece.PieceType.BQ;
 				break;
 			case king:
-				rp.pieceType = piece.player == Piece.Player.white ? ReturnPiece.PieceType.WK : ReturnPiece.PieceType.BK;
+				rp.pieceType = piece.player == Chess.Player.white ? ReturnPiece.PieceType.WK : ReturnPiece.PieceType.BK;
 				break;
 		}
 		rp.pieceFile = ReturnPiece.PieceFile.values()[piece.col];
@@ -351,6 +335,6 @@ public class Board {
         hasPiece = new boolean[8][8];
         realPieces.clear();
         returnPieces.clear();
-        player = Piece.Player.white;
+        player = Chess.Player.white;
     }
 }

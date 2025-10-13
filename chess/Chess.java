@@ -2,7 +2,7 @@ package chess;
 
 public class Chess {
 
-        enum Player { white, black } // chat i have not been using this at all.. feel free to convert to this one
+        enum Player { white, black }
 		static Piece[] pieces = new Piece[32];
 		static String prevMove = "";
     
@@ -26,7 +26,7 @@ public class Chess {
 		else if (squares.length == 1) // Resign is the only legal move with length 1
 		{
 			if (squares[0].equalsIgnoreCase("resign"))
-				rp.message = (Board.player == Piece.Player.white ? ReturnPlay.Message.RESIGN_BLACK_WINS : ReturnPlay.Message.RESIGN_WHITE_WINS);
+				rp.message = (Board.player == Player.white ? ReturnPlay.Message.RESIGN_BLACK_WINS : ReturnPlay.Message.RESIGN_WHITE_WINS);
 			else
 				rp.message = ReturnPlay.Message.ILLEGAL_MOVE;
 		}
@@ -64,13 +64,12 @@ public class Chess {
 	 * This method should reset the game, and start from scratch.
 	 */
 	public static void start() {
-		// System.out.println("holy crap chat we're about to play chess\n");
 		Board.reset();
 		int i = 0;
-		Piece.Player player;
+		Player player;
 		while (i < 32 ) {
 			while (i < 16) {
-				player = Piece.Player.white;
+				player = Player.white;
 				if (i < 8) {
 					pieces[i] = new Pawn(player, 6, i);
 				} else {
@@ -96,7 +95,7 @@ public class Chess {
 				}
 				i++;
 			}
-			player = Piece.Player.black;
+			player = Player.black;
 			if (i < 24) {
 				pieces[i] = new Pawn(player, 1, i - 16);
 			} else {
@@ -124,9 +123,6 @@ public class Chess {
 		}
 		for (Piece piece : pieces) {
 			Board.placePiece(piece);
-			// returnPieces.add(makeReturnPiece(piece));
 		}
-		Board.printBoard(); // turn this off when submitting
-		// PlayChess.printBoard(returnPieces);
 	}
 }
