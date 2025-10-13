@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class King extends Piece {
 
-    public static int[] whiteKing = new int[]{7, 4}; // location of white king
-    public static boolean whiteCheck = false; // white is in check
-    public static int[] blackKing = new int[]{0, 4};
-    public static boolean blackCheck = false;
+    public static int[] whiteKing; // location of white king
+    public static boolean whiteCheck; // white is in check
+    public static int[] blackKing;
+    public static boolean blackCheck;
     boolean hasMoved;
 
     public King(Chess.Player player, int row, int col) {
@@ -18,6 +18,13 @@ public class King extends Piece {
         moveTypes.add(MoveType.horizontal);
         moveTypes.add(MoveType.diagonal);
         hasMoved = false;
+    }
+
+    public static void initialize() {
+        whiteKing = new int[]{7, 4};
+        whiteCheck = false;
+        blackKing = new int[]{0, 4};
+        blackCheck = false;
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) {

@@ -125,5 +125,6 @@ public class Chess {
 		for (Piece piece : pieces) {
 			Board.placePiece(piece);
 		}
+		King.initialize();
 	}
 }

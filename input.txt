@@ -38,9 +38,3 @@ c1 b2
 f1 f2
 a1 d1
 d6 g3
-h2 h1
-f2 b2
-d1 d8
-f8 d8
-f3 e5
-b2 c1
