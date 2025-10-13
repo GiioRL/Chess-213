@@ -68,6 +68,8 @@ public abstract class Piece {
             Board.removePiece(attacker);
         }
         boolean bool = true;
+        Piece dummy = new Dummy(type, player, newRow, newCol);
+        Board.placePiece(dummy);
         if (player == Chess.Player.white)
         {
             int[] whiteKing = King.whiteKing;
@@ -80,6 +82,7 @@ public abstract class Piece {
             if (Board.squareUnderCheck(blackKing[0], blackKing[1], Chess.Player.black))
                 bool = false;
         }
+        Board.removePiece(dummy);
         if (attacker != null) {
             Board.placePiece(attacker);
         }
