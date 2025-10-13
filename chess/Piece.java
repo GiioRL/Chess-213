@@ -63,19 +63,28 @@ public abstract class Piece {
 
     public boolean selfCheck(int newRow, int newCol) { //returns false if move results in self Check // infinite loop in line e2 e4; d1 h5; g7 g6; f7 f6
         Board.removePiece(this);
+        Piece attacker = Board.getPiece(newRow, newCol);
+        if (attacker != null) {
+            Board.removePiece(attacker);
+        }
+        boolean bool = true;
         if (player == Chess.Player.white)
         {
             int[] whiteKing = King.whiteKing;
-            if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], player))
-                return false;
+            if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], Chess.Player.white))
+                bool = false;
         }
         if (player == Chess.Player.black)
         {
             int[] blackKing = King.blackKing;
-            if (Board.squareUnderCheck(blackKing[0], blackKing[1], player))
-                return false;
+            if (Board.squareUnderCheck(blackKing[0], blackKing[1], Chess.Player.black))
+                bool = false;
         }
-        return true;
+        if (attacker != null) {
+            Board.placePiece(attacker);
+        }
+        Board.placePiece(this);
+        return bool;
     }
 
     public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
@@ -275,13 +284,13 @@ public abstract class Piece {
             if (player == Chess.Player.white)
             {
                 int[] whiteKing = King.whiteKing;
-                if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], player))
+                if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], Chess.Player.white))
                     bool = false;
             }
             if (player == Chess.Player.black)
             {
                 int[] blackKing = King.blackKing;
-                if (Board.squareUnderCheck(blackKing[0], blackKing[1], player))
+                if (Board.squareUnderCheck(blackKing[0], blackKing[1], Chess.Player.black))
                     bool = false;
             }
             Board.removePiece(dummy);
@@ -313,12 +322,12 @@ public abstract class Piece {
                     }
                     if (player == Chess.Player.white) {
                         int[] blackKing = King.blackKing;
-                        if (Board.squareUnderCheck(blackKing[0], blackKing[1], player))
+                        if (Board.squareUnderCheck(blackKing[0], blackKing[1], Chess.Player.black))
                             check(rp);
                         Board.player = Chess.Player.black;
                     } else {
                         int[] whiteKing = King.whiteKing;
-                        if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], player))
+                        if (Board.squareUnderCheck(whiteKing[0], whiteKing[1], Chess.Player.white))
                             check(rp);
                         Board.player = Chess.Player.white;
                     }
