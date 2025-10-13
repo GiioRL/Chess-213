@@ -82,7 +82,7 @@ public abstract class Piece {
         return true;
     }
 
-    public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move doesn't result in check on self.
+    public boolean canMove(int newRow, int newCol, MoveType movetype) { // cannibalCheck, check that no pieces in the path, make sure move does not result in check on self.
         if (moveTypes.contains(movetype)) {
             if (cannibalCheck(newRow, newCol)) {
                 if (selfCheck(newRow, newCol)) {
@@ -225,7 +225,7 @@ public abstract class Piece {
 
         for (int i = 0; i < Board.realPieces.size(); i++) {
             Piece piece = Board.realPieces.get(i);
-            if (piece.player != player) { //piece needs to be on the checked team's side
+            if (piece.player != player) { //piece needs to be on the checked team side
                 for (int[] square: path) {
                     int tempRow = square[0];
                     int tempCol = square[1];

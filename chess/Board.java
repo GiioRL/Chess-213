@@ -16,7 +16,7 @@ public class Board {
             realPieces.add(piece);
             returnPieces.add(makeReturnPiece(piece));
         } else { // for dummies
-            if (!hasPiece[piece.row][piece.col]) { // only place dummy if there is no piece there already, don't override / still questionable
+            if (!hasPiece[piece.row][piece.col]) { // only place dummy if there is no piece there already, do not override
                 hasPiece[piece.row][piece.col] = true;
                 board[piece.row][piece.col] = piece;
             }
@@ -202,7 +202,7 @@ public class Board {
         // }
     }
 
-    public static int[][] getPath(int row, int col, int newRow, int newCol, Piece.MoveType movetype) { // return IN ORDER the squares in between this piece's square and target square
+    public static int[][] getPath(int row, int col, int newRow, int newCol, Piece.MoveType movetype) { // return IN ORDER the squares in between this piece square and target square
         int[][] squares = null;
         int i = 0;
         boolean bool = false;
