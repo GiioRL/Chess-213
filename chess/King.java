@@ -20,6 +20,13 @@ public class King extends Piece {
         hasMoved = false;
     }
 
+    public static void reset() {
+        whiteKing = new int[]{7, 4};
+        whiteCheck = false;
+        blackKing = new int[]{0, 4};
+        blackCheck = false;
+    }
+
     public boolean canMove(int newRow, int newCol, MoveType movetype) {
         if (canCastle(newRow, newCol, movetype))
             return true;

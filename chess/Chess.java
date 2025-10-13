@@ -66,6 +66,8 @@ public class Chess {
 	 */
 	public static void start() {
 		Board.reset();
+		King.reset();
+		prevMove = "";
 		int i = 0;
 		Player player;
 		while (i < 32 ) {
