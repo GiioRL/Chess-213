@@ -1,3 +1,4 @@
+// Created by Dylan Cupen and Rohit Bhagat
 package chess;
 
 public class Chess {
