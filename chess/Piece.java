@@ -127,9 +127,7 @@ public abstract class Piece {
             piece = Board.getPiece(newRow, newCol);
         }
         if (piece != null) {
-            if (player != piece.player) {
-                pieces.add(piece);
-            }
+            pieces.add(piece);
         }
     }
 
@@ -290,7 +288,7 @@ public abstract class Piece {
             if (canMove(newRow, newCol, movetype)) {
                 if (blockCheck(newRow, newCol)) { // start making the move
                     ArrayList<Piece> pieces = sees();
-                    for (Piece piece: pieces) {
+                    for (Piece piece: pieces) { // remove this piece from other piece seenBy
                         piece.seenBy.remove(this);
                     }
                     if (Board.hasPiece[newRow][newCol]) { // capture
@@ -313,35 +311,53 @@ public abstract class Piece {
                     pieces = dummy.sees();
                     for (Piece piece : pieces) {
                         if (piece.seesSquare(row, col)) {
-                            seenBy.add(piece);
+                            seenBy.add(piece); //populate seenBy
                             Piece blocked = piece.seeThrough(this);
                             if (blocked != null) {
-                                blocked.seenBy.remove(piece);
-                                if (blocked.type == Type.king) {
-                                    if (player == Chess.Player.white) { //player is the same color as blocked
-                                        King.whiteCheck = false;
-                                    } else {
-                                        King.blackCheck = false;
+                                blocked.seenBy.remove(piece); //remove pieces that are now blocked
+                                // if (blocked.type == Type.king) {
+                                //     if (player == Chess.Player.white) { //player is the same color as blocked
+                                //         King.whiteCheck = false;
+                                //     } else {
+                                //         King.blackCheck = false;
+                                //     }
+                                // }
+                            }
+                        }
+                    }
+                    boolean bool = false; //determines check
+                    for (Piece piece: seenBy) {
+                        if (piece.player == player) {
+                            pieces = piece.sees();
+                            for (Piece target: pieces) {
+                                if (!target.seenBy.contains(piece)) {
+                                    target.seenBy.add(piece);
+                                    if ((target.player != player) && (target.type == Type.king)) { //discovered check
+                                        bool = true;
                                     }
                                 }
                             }
                         }
                     }
+                    seenBy.clear();
                     dummy = new Dummy(Type.knight, player, row, col);
                     pieces = dummy.sees();
                     for (Piece piece: pieces) {
                         if (piece.type == Type.knight) {
-                            seenBy.add(piece);
+                            seenBy.add(piece); //populate seenBy
                         }
                     }
+
                     pieces = sees();
                     for (Piece piece : pieces) {
                         piece.seenBy.add(this);
-                        if (piece.type == Type.king) {
-                            check(rp);
+                        if ((piece.player != player) && (piece.type == Type.king)) {
+                            bool = true;
                         }
                     }
-                    seenBy.clear();
+                    if (bool) {
+                        check(rp);
+                    }
                     if (player == Chess.Player.white) {
                         Board.player = Chess.Player.black;
                     } else {
