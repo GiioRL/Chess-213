@@ -1,5 +1,13 @@
 e2 e4
-e7 e5
-a2 a4
-d8 h4
-a1 a2
+a7 a6
+d1 h5
+a6 a5
+h5 e5
+a5 a4
+b1 c3
+g7 g6
+c3 d5
+a4 a3
+h2 h3
+g8 h6
+d5 f6

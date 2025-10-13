@@ -229,7 +229,7 @@ public class Board {
     }
 
     public static int[][] getPath(int row, int col, int newRow, int newCol, Piece.MoveType movetype) { // return IN ORDER the squares in between this piece's square and target square
-        int[][] squares = null;
+        int[][] squares = new int[0][2];
         int i = 0;
         boolean bool = false;
         int tempRow = -1;
