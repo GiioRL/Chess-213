@@ -176,7 +176,9 @@ public class Pawn extends Piece {
         return num;
     }
 
-    public int move(int newRow, int newCol, String newType, ReturnPlay rp) {
+    public int move(String coord, String newType, ReturnPlay rp) {
+        int[] newSquare = Board.coordConverter(coord);
+        int newRow = newSquare[0], newCol = newSquare[1];
         if (canMove(newRow, newCol, classifyMove(newRow, newCol))) {
             if (newType.equals("R") || newType.equals("N") || newType.equals("B") || newType.equals("Q")) {
                 if (super.move(newRow, newCol, rp) == 1) {
