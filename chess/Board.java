@@ -91,7 +91,7 @@ public class Board {
         placePiece(dummy);
         ArrayList<Piece> pieces = dummy.sees();
         for (Piece piece : pieces) {
-            if (piece.seesSquare(row, col)) {
+            if ((piece.player != player) && (piece.seesSquare(row, col))) {
                 removePiece(dummy);
                 return true;
             }
@@ -102,7 +102,7 @@ public class Board {
         placePiece(dummy);
         pieces = dummy.sees();
         for (Piece piece : pieces) {
-            if (piece.seesSquare(row, col)) {
+            if ((piece.player != player) && (piece.seesSquare(row, col))) {
                 removePiece(dummy);
                 return true;
             }       

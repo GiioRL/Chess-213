@@ -100,7 +100,7 @@ public abstract class Piece {
         return false;
     }
 
-    public boolean seesSquare(int newRow, int newCol) { //this may or may not be questionable
+    public boolean seesSquare(int newRow, int newCol) { //need a piece/dummy placed on the square to be visible
         MoveType movetype = classifyMove(newRow, newCol);
         if (moveTypes.contains(movetype)) {
             int[][] squares = Board.findPieces(row, col, movetype);
