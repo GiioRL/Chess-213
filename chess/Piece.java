@@ -223,23 +223,12 @@ public abstract class Piece {
                 }
             }
         }
-        for (Piece piece : seenBy) { // white rook g8 thinks black king b8 sees it
+        for (Piece piece : seenBy) {
             if (piece.canMove(row, col, piece.classifyMove(row, col))) {
                 return; // this piece can be captured
             }
         }
         int[][] path = Board.getPath(row, col, king.row, king.col, classifyMove(king.row, king.col));
-        // for (Piece piece: Board.realPieces) {
-        //     if (piece.player != player) { //piece needs to be on the checked team's side
-        //         for (int[] square: path) {
-        //             int tempRow = square[0];
-        //             int tempCol = square[1];
-        //             if (piece.canMove(tempRow, tempCol, piece.classifyMove(tempRow, tempCol))) {
-        //                 return; // piece can block the check
-        //             }
-        //         }
-        //     }
-        // }
 
         for (int i = 0; i < Board.realPieces.size(); i++) {
             Piece piece = Board.realPieces.get(i);
@@ -303,7 +292,7 @@ public abstract class Piece {
     }
 
     public int move(int newRow, int newCol, ReturnPlay rp) {
-        // if (player == Board.player) { // MUST TURN THIS BACK ON
+        if (player == Board.player) { // MUST TURN THIS BACK ON
             MoveType movetype = classifyMove(newRow, newCol);
             // if (moveTypes.contains(movetype)) { // piece is allowed to move in this direction -> merged with canMove
                 // if (cannibalCheck(newRow, newCol)) { // make sure pieces can't eat their own color
@@ -381,7 +370,7 @@ public abstract class Piece {
             //     return -1; //piece cannot move in this direction
             // }
             
-        // } MUST TURN THIS BACK ON
+        }
         return -1; //move is illegal and was not made
     }
 
