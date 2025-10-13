@@ -126,5 +126,6 @@ public class Chess {
 			Board.placePiece(piece);
 		}
 		King.initialize();
+		prevMove = "";
 	}
 }
