@@ -120,15 +120,15 @@ public class Pawn extends Piece {
             return;
         }
         Board.removePiece(this);
-        newPiece.seenBy = seenBy;
         Board.placePiece(newPiece); // check for check with new piece
-        ArrayList<Piece> pieces = newPiece.sees();
-        for (Piece piece: pieces) {
-            piece.seenBy.add(newPiece);
-            if (piece.type == Type.king) {
-                newPiece.check(rp);
-            }
-        }
+        Piece king;
+        if (player == Chess.Player.white) {
+            king = Board.getPiece(King.blackKing);
+        } else {
+            king = Board.getPiece(King.whiteKing);
+        }     
+        if (Board.squareUnderCheck(king.row, king.col, king.player))
+            check(rp);   
     }
 
     public int enPassant(int newRow, int newCol, ReturnPlay rp)

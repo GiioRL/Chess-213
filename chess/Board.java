@@ -111,6 +111,32 @@ public class Board {
         return false;
     }
 
+    public static ArrayList<Piece> findChecks(int row, int col, Chess.Player player) // player represents side that would be under check, not side that is giving check
+    {
+        // Use queen as dummy to find pieces attacking (newRow, newCol)
+        Piece dummy = new Dummy(Piece.Type.queen, player, row, col);
+        placePiece(dummy);
+        ArrayList<Piece> pieces = dummy.sees();
+        ArrayList<Piece> checkPieces = new ArrayList<>();
+        for (Piece piece : pieces) {
+            if (piece.seesSquare(row, col)) {
+                checkPieces.add(piece);
+            }
+        }
+        removePiece(dummy);
+        // Need to also use knight attacking (newRow, newCol)
+        dummy = new Dummy(Piece.Type.knight, player, row, col);
+        placePiece(dummy);
+        pieces = dummy.sees();
+        for (Piece piece : pieces) {
+            if (piece.seesSquare(row, col)) {
+                checkPieces.add(piece);
+            }       
+        }
+        removePiece(dummy);
+        return checkPieces;
+    }
+
     public static int[][] findPieces(int row, int col, Piece.MoveType movetype) { // this may return the square that the piece is on // null if knight or illegal
         // for (MoveType movetype : moveTypes) {
             int newRow = -1;
