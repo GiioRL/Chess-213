@@ -24,8 +24,13 @@ public class King extends Piece {
         if (canCastle(newRow, newCol, movetype))
             return true;
         if (cannibalCheck(newRow, newCol)) { // need to check if move is within range
-            if (moveTypes.contains(movetype) && !Board.squareUnderCheck(newRow, newCol, player)) {
-                return (Math.abs(row-newRow) <= 1) && (Math.abs(col-newCol) <= 1);
+            if (moveTypes.contains(movetype)) {
+                Board.removePiece(this);
+                if (!Board.squareUnderCheck(newRow, newCol, player)) {
+                    Board.placePiece(this);
+                    return (Math.abs(row-newRow) <= 1) && (Math.abs(col-newCol) <= 1);
+                }
+                Board.placePiece(this);
             }
         }
         return false;
