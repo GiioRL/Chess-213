@@ -187,12 +187,16 @@ public abstract class Piece {
 
     public void check(ReturnPlay rp) {
         rp.message = ReturnPlay.Message.CHECK;
+        Piece king;
         if (player == Chess.Player.white) {
             King.blackCheck = true;
+            king = Board.getPiece(King.blackKing);
         } else {
             King.whiteCheck = true;
+            king = Board.getPiece(King.whiteKing);
         }
-        checkMate(rp);
+        Piece attacker = king.seenBy.get(0);
+        attacker.checkMate(rp); //what if it's double check?
     }
 
     public void checkMate(ReturnPlay rp) { // check for checkmate, update rp message if necessary, check and checkmate are run on the piece checking the king
@@ -213,6 +217,16 @@ public abstract class Piece {
                     }
                 }
             }
+        }
+
+        if (king.seenBy.size() < 1) {
+            // double check, king cannot move, checkmate
+            if (player == Chess.Player.white) {
+                rp.message = ReturnPlay.Message.CHECKMATE_WHITE_WINS;
+            } else {
+                rp.message = ReturnPlay.Message.CHECKMATE_BLACK_WINS;
+            }
+            return;
         }
         for (Piece piece : seenBy) {
             if (piece.canMove(row, col, piece.classifyMove(row, col))) {
