@@ -39,7 +39,7 @@ public class Chess {
 		} else { // legal move (not yet legal but heres the legal move code)
 			Piece piece = Board.getPiece(squares[0]);
 			int num = 1;
-			if (squares.length == 3 && piece.type == Piece.Type.pawn)
+			if (squares.length == 3 && piece.type == Piece.Type.pawn && !squares[2].equals("draw?"))
 				num = ((Pawn) piece).move(squares[1], squares[2], rp);
 			else if (squares.length == 4 && piece.type == Piece.Type.pawn && squares[3].equals("draw?"))
 				num = ((Pawn) piece).move(squares[1], squares[2], rp);
